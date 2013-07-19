@@ -1,6 +1,6 @@
 Addons.Current.Shop = 
 {	
-	ListID = 4,
+	ListID = 3,
 	Name = "",
 	Description = "",
 	Author = "EatingPeopleIsFun",

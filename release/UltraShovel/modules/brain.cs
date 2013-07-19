@@ -4,14 +4,14 @@ Brain = {
 	AmmoTime = 0,
 	ReturnTime = 0,
 	ItemsTime = { 
-				[1] = 0,
-				[2] = 0,
-				[3] = 0,
-				[4] = 0,
-				[5] = 0,
-				[6] = 0,
-				[7] = 0				
-				}
+		[1] = 0,
+		[2] = 0,
+		[3] = 0,
+		[4] = 0,
+		[5] = 0,
+		[6] = 0,
+		[7] = 0				
+	}
 }
 
 Brain.Unload = func (){
@@ -22,54 +22,56 @@ Brain.Load = func(){
 	if (Shovel.IsDebug) SysMsg("Brain loaded");
 }
 
-Brain.KeepPosition = func(Actor){
-	if (tonumber(Settings['Mode']) == 0){
-		if (!Shovel.IsTime(Brain.ReturnTime, tonumber(Settings['ReturnTime']))) return;
+// Call this method to keep position
+Brain.KeepPosition = func(){
+	if (Settings.Family.Mode == 0){
+		if (!Shovel.IsTime(Brain.ReturnTime, Settings.Family.ReturnTime)) return;
 		Brain.ReturnTime = Shovel.Now;
 		
-		for (i = 1, Brain.GetCharsCount())
+		for (i = 1, Characters.Count())
 		{
-			if(IsNearFromKeepDestPosition(Shovel.Actors[i].SelfAi, 100) != 'YES')
+			if(IsNearFromKeepDestPosition(Characters[i].SelfAi, 100) != 'YES')
 			{
-				if (Shovel.IsDebug) SysMsg('Return ' .. Shovel.Actors[i].Name);
-				KeepDestMoveTo(Shovel.Actors[i].SelfAi);				
+				if (Shovel.IsDebug) SysMsg('Return ' .. Characters[i].Name);
+				KeepDestMoveTo(Characters[i].SelfAi);				
 			}
 		}
 		
 		sleep(1000);	
-	
-	}
-	else{
+	} else {
 		sleep(3000);
-		if (Shovel.IsTime(Brain.ReturnTime, tonumber(Settings['CallTime'])))
-		{	
+		if (Shovel.IsTime(Brain.ReturnTime, Settings.Family.CallTime)){	
 			Brain.ReturnTime = Shovel.Now;
 			Call();
 		}			
 	}
 }
 
+// Call this method to handle auto-attack
 Brain.AutoAttack = func(Actor){
 	sleep(100);
-	if (Actor.AutoAttack == 'false') { return; }
+	if (!Actor.Settings.AutoAttack) { return; }
 	if (IsMoving(Actor.SelfAi) == 'YES') { return; }
-	var curTarget = GetNearAtkableEnemy(Actor.SelfAi, tonumber(Settings["KeepRange"]));
+	var curTarget = GetNearAtkableEnemy(Actor.SelfAi, Settings.Family.KeepRange);
 	if (!curTarget) return;
 	SetAiTarget(Actor.SelfAi, curTarget);
-	if (IsAbleToAttack(Actor.SelfAi) == 'YES')
-	{
+	if (IsAbleToAttack(Actor.SelfAi) == 'YES'){
 		Attack(Actor.SelfAi, curTarget);
 	}
 }
 
+// Call this method to handle auto-pick
 Brain.AutoPick = func(Actor){
 	sleep(100);
+	// stop pick up if char is moving
 	if (IsMoving(Actor.SelfAi) == 'YES') { return false; }
-	if (tostring(Settings['AutoPickChar' .. (Actor.Index + 1)]) == 'true')
+	if (Actor.Settings.AutoPick)
 	{
-		var nearItem = GetNearItem(Actor.SelfAi, tonumber(Settings["PickRange"]));
+		// get nearest item in range
+		var nearItem = GetNearItem(Actor.SelfAi, Settings.Family.PickRange);
 		if (nearItem != 0) 
 		{
+			// pick it
 			PickItem(Actor.SelfAi, nearItem);
 			return true;
 		}
@@ -77,148 +79,154 @@ Brain.AutoPick = func(Actor){
 	}
 }
 
-Brain.KnockdownProtect = func (Actor){
-
-}
-
-Brain.AutoSkill = func(Actor){
+// Call this method to handle auto-skills
+Brain.AutoSkills = func(Actor){
 	sleep(100);
-		
-	if (!Actor.Stances) return;
-	for (stanceIndex, stance in pairs(Actor.Stances))
-	{
-		for (skillIndex, skill in pairs(stance.Skills))
-		{			
-			if (Brain.UseSkill(Actor, skill, skillIndex-1, stanceIndex) == true){
-				sleep(200);				
-			}			
-		}
-	}
-}
-
-Brain.AutoItems = func(Actor){
-
-	for (i = 1,7)
-	{
-		if (tostring(Settings['ItemUse' .. i]) == 'true')
-		{
-			if (Shovel.IsTime(Brain.ItemsTime[i], tonumber(Settings['Item' .. i .. 'Time'])))
-			{
-				Brain.ItemsTime[i] = Shovel.Now;
-				UseCommonItem(tonumber(Settings['Item' .. i]));
+	for (i = 1, table.getn(Actor.Settings.WeaponSets)){
+		var set = Actor.Settings.WeaponSets[i];
+		for (j = 1, table.getn(set.Stances)){
+			var stance = set.Stances[j];
+			for (k = 1, 5){
+				var skill = stance.Skills[k];
+				var result = Brain.TryToUseSkill(Actor, stance, skill);
+				if (result) sleep(100);
 			}
 		}
 	}
-	
-	if (Actor.UseBullets == false) return;
-	if (!Shovel.IsTime(Brain.AmmoTime, tonumber(Settings['AmmoUsageDelay']))) return;
-	Brain.AmmoTime = Shovel.Now;
-	
-	var numberOfBullets = GetItemCountByType(Actor.BulletsID);
-	if (numberOfBullets < 5000)
-	{
-		UseCommonItem(tonumber(Actor.NumPadButton));
-	}
 }
 
-Brain.UseSkill = func(MyActor, skill, skillIndex, stanceIndex){	
-	var AiBrain = GetAiActor(MyActor.Self);
-	if (tostring(skill.InUse) == 'false') return false;
-	if (!Shovel.IsTime(skill.UsageTime, skill.Timing)) return false;	
-	if (skill.ID == 0) return false;	
-	//if (Shovel.IsDebug) SysMsg('[' .. MyActor.Name .. '] Skill: ' .. skill.Name);
+// Character trying to use skill
+Brain.TryToUseSkill = func(Actor, stance, skill){
+	if (skill.Id == 0) return false;
+	if (!skill.InUse) return false;
+	if (!Shovel.IsTime(skill.UsageTime, skill.Timing)) return false;
+
+	// if selected stance is incorrect, then choose correct stance
+	if (!Brain.IsMyStanceCorrect(Actor, stance)){
+		Characters.ChangeStance(Actor.Index, stance.Index);
+	}
 	
-	var target = tostring(skill.Target);
-	if (target == 'Ground' || target == 'None')
-	{	
-		Brain.ChangeStanceIfIncorrect(MyActor, stanceIndex);
-		Brain.UseNoTargetSkill(MyActor, skill.ID, skillIndex);
-	}
-	else if (target == 'Enemy' || target == 'Wave')
-	{	
-		var curTarget = GetNearAtkableEnemy(AiBrain, tonumber(Settings["KeepRange"]));
-		if (curTarget)
-		{
-			Brain.ChangeStanceIfIncorrect(MyActor, stanceIndex);
-			UseSkill(AiBrain, curTarget, skill.ID);
+	if (Shovel.IsDebug) SysMsg('[' .. Actor.Name .. '] Skill: ' .. skill.Id);
+
+	// handle targets
+	if (skill.Target == 'Enemy'){
+		var curTarget = GetNearAtkableEnemy(Actor.SelfAi, Settings.Family.KeepRange);
+		if (curTarget){
+			UseSkill(Actor.SelfAi, curTarget, skill.Id);
 		}
-	}
-	else if (target == 'Party')
-	{
-		var curTarget = GetNeedHealFriend(AiBrain, tonumber(Settings["KeepRange"]), 95)
-		if (curTarget)
-		{
-			Brain.ChangeStanceIfIncorrect(MyActor, stanceIndex);
-			UseSkill(AiBrain, curTarget, skill.ID);
+		
+	} else if (skill.Target == 'None'){	
+		if (Settings.Family.CallAtPartyBuff){
+			if (skill.IsTeamBuff){
+				Characters.Call(Actor.Index);
+			}
 		}
-	}
-	else if (target == 'Corpse')
-	{
+		
+		if (UseSkillNone) UseSkillNone(Actor.SelfAi, skill.Id);
+		
+	} else if (skill.Target == 'Party'){
+		if (Settings.Family.CallAtPartyBuff){
+			if (skill.IsTeamBuff){
+				Characters.Call(Actor.Index);
+			}
+		}
+		
+		var curTarget = GetNeedHealFriend(Actor.SelfAi, Settings.Family.KeepRange, 95)
+		if (curTarget){
+			UseSkill(Actor.SelfAi, curTarget, skill.Id);
+		}
+		
+	} else if (skill.Target == 'Corpse'){
 		var curTarget = Brain.GetDeadTeamMember();
-		if (curTarget)
-		{
-			Brain.ChangeStanceIfIncorrect(MyActor, stanceIndex);
-			UseSkill(AiBrain, curTarget, skill.ID);
+		if (curTarget){
+			UseSkill(Actor.SelfAi, curTarget, skill.Id);
 		}
-	}
-	else if (target == 'PartyBuff')
-	{	
-		SetSquad(4);
-		InstantHold(AiBrain);
-		if (tostring(Settings['CallAtPartyBuff']) == 'true')
-		{				
-			Brain.ChangeStanceIfIncorrectWithCall(MyActor, stanceIndex);
-			Brain.UseNoTargetSkill(MyActor, skill.ID, skillIndex);			
+		
+	} else if (skill.Target == 'Ground'){
+		if (UseSkillNone) UseSkillNone(Actor.SelfAi, skill.Id);	
+		
+	} else if (skill.Target == 'Wave'){
+		var curTarget = GetNearAtkableEnemy(Actor.SelfAi, Settings.Family.KeepRange);
+		if (curTarget){
+			UseSkill(Actor.SelfAi, curTarget, skill.Id);
 		}
-		else
-		{		
-			Brain.ChangeStanceIfIncorrect(MyActor, stanceIndex);		
-			Brain.UseNoTargetSkill(MyActor, skill.ID, skillIndex);
-		}
+	} else {
+		SysMsg('I dont know how to use skill with [Id] = ' .. skill.Id);
 	}
 	
 	skill.UsageTime = Shovel.Now; 
-	while(IsSkillUsing(AiBrain) == 'YES') { sleep(200); }
+	while(IsSkillUsing(Actor.SelfAi) == 'YES') { sleep(200); }
 	return true;
 }
 
-Brain.UseNoTargetSkill = func (Actor, id, index) {
-	if (UseSkillNone) UseSkillNone(Actor.SelfAi, tonumber(id));
-	else 
-	Skill(tonumber(Actor.Index), tonumber(index));
+// Call this method to handle auto-items
+Brain.AutoItems = func(Actor){
+	for (i = 1, 7){
+		if (Settings.Family.AutoItems[i].InUse)	{
+			if (Shovel.IsTime(Brain.ItemsTime[i], Settings.Family.AutoItems[i].Time)){
+				Brain.ItemsTime[i] = Shovel.Now;
+				UseCommonItem(Settings.Family.AutoItems[i].Num);
+				if (Shovel.IsDebug) SysMsg('Pressing num pad button ' .. Settings.Family.AutoItems[i].Num);
+			}
+		}		
+	}	
 }
 
-Brain.AutoPotions = func(){
-	if (!Shovel.IsReady) return;
+Brain.AutoBullets = func(Actor){
+	if (!Actor.Settings.UseBullets) return;
+	if (!Shovel.IsTime(Brain.AmmoTime, Settings.AmmoUsageDelay)) return;
+	Brain.AmmoTime = Shovel.Now;
 	
-	for(i = 1, Brain.GetCharsCount())
-	{
-		var uiFrame = GetFrameByName('charbaseinfo', i - 1);
-		if (!uiFrame) return;
-		Shovel.Actors[i].HP = tonumber(GetTextByKey(uiFrame, 'hp'));
-		Shovel.Actors[i].MP = tonumber(GetTextByKey(uiFrame, 'sp'));
+	var numberOfBullets = GetItemCountByType(Actor.Settings.BulletsID);
+	if (numberOfBullets < 5000){
+		UseCommonItem(Actor.Settings.NumPadButton);
+	}
+}
 
-		if(tostring(Settings["UseHPChar" .. i]) == 'true')
+// Call this method when auto-keep farming mode is enabled
+Brain.ReturnToFarm = func(Actor){	
+	if (Settings.Family.Mode == 0)
+	{			
+		sleep(500);
+		while (IsNearFromKeepDestPosition(Actor.SelfAi, 50) != 'YES'){			
+			KeepDestMoveTo(Actor.SelfAi);
+			sleep(1000);
+		}
+		if (Shovel.IsDebug) SysMsg('Returned to farm');
+		ChangeTacticsAi(Actor.SelfAi, 'TS_KEEP');
+	} else {
+		Keep();
+	}
+}
+
+// Call this method to use hp and sp potions
+Brain.AutoPotions = func(){
+	if (!Characters.AreInitialized) return;
+	for(i = 1, Characters.Count())
+	{
+		Characters.Update(i);
+		if(Characters[i].Settings.AutoHP)
 		{
-			var onePercent = Shovel.Actors[i].MaxHP / 100;
-			var currentPercent = Shovel.Actors[i].HP / onePercent;
-			if (currentPercent < Shovel.Actors[i].HPlevel)
+			var onePercent = Characters[i].MaxHP / 100;
+			var currentPercent = Characters[i].HP / onePercent;
+			if (currentPercent < Characters[i].Settings.HPlevel)
 			{
-				UseItem(Shovel.Actors[i].Index, 0);
+				UseItem(Characters[i].Index - 1, 0);
 			}
 		}
-		if(tostring(Settings["UseMPChar" .. i]) == 'true')
+		if(Characters[i].Settings.AutoSP)
 		{
-			var onePercent = Shovel.Actors[i].MaxMP / 100;
-			var currentPercent = Shovel.Actors[i].MP / onePercent;
-			if (currentPercent < Shovel.Actors[i].MPlevel)
+			var onePercent = Characters[i].MaxSP / 100;
+			var currentPercent = Characters[i].SP / onePercent;
+			if (currentPercent < Characters[i].Settings.SPlevel)
 			{
-				UseItem(Shovel.Actors[i].Index, 1);
+				UseItem(Characters[i].Index - 1, 1);
 			}
 		}
 	}
 }
 
+// Call this method to enable user target
 Brain.UserTarget = func(Actor){
 	var selfAi = Actor.SelfAi;
 	var userTarget = GetUserTarget(selfAi);
@@ -232,157 +240,11 @@ Brain.UserTarget = func(Actor){
 	}
 }
 
-Brain.GetAiIndex = func(self){
-	for (i = 1, Brain.GetCharsCount())
-	{ if (self == Shovel.Actors[i].Self) return i; }
-	return -1;
-}
-
-Brain.HandleActor = func(self){	
-	if (Shovel.CharsCounter > Brain.GetCharsCount())
-	{		
-		if  (Brain.GetAiIndex(self) == -1)
-		{
-			Shovel.ReInit();
-			return;
-		}
-		else return;
-	}
-	if (Shovel.IsDebug) SysMsg("Loading actor " .. Shovel.CharsCounter);
-	Shovel.Actors[Shovel.CharsCounter].Self = self;
-	Shovel.Actors[Shovel.CharsCounter].SelfAi = GetAiActor(self);
-	Shovel.Actors[Shovel.CharsCounter].Index = Shovel.CharsCounter - 1;
-	var frame = GetFrameByName('status', Shovel.CharsCounter - 1);
-	if (frame)
-	{				
-		Shovel.Actors[Shovel.CharsCounter].Name = GetTextByKey(frame, 'charactername');
-		Shovel.Actors[Shovel.CharsCounter].Level = GetTextByKey(frame, 'characterlevel');
-		Shovel.Actors[Shovel.CharsCounter].Job = GetTextByKey(frame, 'characterjob');
-	}
-	frame = GetFrameByName('charbaseinfo', Shovel.CharsCounter - 1);
-	if (frame) 
-	{
-		Shovel.Actors[Shovel.CharsCounter].HP = tonumber(GetTextByKey(frame, 'hp'));
-		Shovel.Actors[Shovel.CharsCounter].MaxHP = tonumber(GetTextByKey(frame, 'max_hp'));
-		Shovel.Actors[Shovel.CharsCounter].MP = tonumber(GetTextByKey(frame, 'sp'));
-		Shovel.Actors[Shovel.CharsCounter].MaxMP = tonumber(GetTextByKey(frame, 'max_sp'));
-	}
-	
-	Shovel.Actors[Shovel.CharsCounter].Stances = Brain.GetStancesByJob(Shovel.Actors[Shovel.CharsCounter].Job);
-	Shovel.Actors[Shovel.CharsCounter].Weapons = Brain.GetWeaponsByJob(Shovel.Actors[Shovel.CharsCounter].Job);
-
-	Shovel.Actors[Shovel.CharsCounter].HPlevel = 50;
-	Shovel.Actors[Shovel.CharsCounter].MPlevel = 50;
-	Shovel.Actors[Shovel.CharsCounter].UseBullets = 'false';
-	Shovel.Actors[Shovel.CharsCounter].BulletsID = 21116;
-	Shovel.Actors[Shovel.CharsCounter].NumPadButton = 0;
-	Shovel.Actors[Shovel.CharsCounter].AutoAttack = 'true';	
-
-	Settings.ParseActor(Shovel.Actors[Shovel.CharsCounter]);
-	SysMsg(Text['Slot'] .. Shovel.CharsCounter .. " : " .. Shovel.Actors[Shovel.CharsCounter].Job .. ' [' .. Shovel.Actors[Shovel.CharsCounter].Name .. 
-	']');
-	if (Shovel.CharsCounter == Brain.GetCharsCount()) {  if(Shovel.IsDebug) SysMsg("- Ready to farm -"); Shovel.IsReady = true; }
-	Shovel.CharsCounter = Shovel.CharsCounter + 1;
-}
-
-Brain.IsNewActor = func(self){
-	for (i = 0, Brain.GetCharsCount() - 1)
-	{		
-		if (Shovel.Actors[i + 1] == nil)
-		{
-			return true;
-		}
-	}
-	return false;	
-}
-
-Brain.GetActorBySelf = func (self){
-	for (i = 0, Brain.GetCharsCount() - 1)
-	{
-		if (Shovel.Actors[i + 1] == nil) { return nil; }
-		if (Shovel.Actors[i + 1].Self == self) { return Shovel.Actors[i + 1]; }	
-	}
-}
-
-Brain.GetCharsCount = func(){
-	var count = 0;
-	for (i = 0, 2) 
-		{
-			if (IsExistMyPc(i) == 'YES')
-			{
-				count = count + 1;
-			}
-		}	
-	return count;
-}
-
-Brain.GetStancesByJob = func(job){
-	for (key, value in pairs(Shovel.Chars)) 
-	{					
-		if (value.Job == job)
-		{
-			var Stances = {};
-			var numOfStances = table.getn(value.Stances);
-			for (i = 1, numOfStances)
-			{
-				Stances[i] = 
-				{
-					Name = value.Stances[i].Name,
-					Skills = {}
-				}
-			    for (j = 1, 6)
-				{					
-					Stances[i].Skills[j] = 
-					{
-						Name 	 = value.Stances[i].Skills[j].Name,
-						ID 		 = value.Stances[i].Skills[j].ID,
-						InUse 	 = false,
-						CastingTime = value.Stances[i].Skills[j].CastingTime,
-						Duration = value.Stances[i].Skills[j].Duration,
-						Cooldown = value.Stances[i].Skills[j].Cooldown,
-						Timing 	 = value.Stances[i].Skills[j].Timing,
-						Target   = value.Stances[i].Skills[j].Target,
-						UsageTime = -1000
-					}
-				}
-			}
-			return Stances;
-		}
-	}
-	SysMsg(Text['StancesNotFound'] .. job);
-}
-
-Brain.GetWeaponsByJob = func(job){
-	for (key, value in pairs(Shovel.Chars)) 
-	{	
-		if (value.Job == job)
-		{		
-			var Weapons = {};
-			var numOfWeapons = table.getn(value.Weapons);
-		
-			for (i = 1, numOfWeapons)
-			{
-				Weapons[i] = 
-				{
-					Name = value.Weapons[i].Name,
-					Stances = {}
-				}
-				var numOfStances = table.getn(value.Weapons[i].Stances);
-				for (j = 1, numOfStances)
-				{
-					Weapons[i].Stances[j] = value.Weapons[i].Stances[j];
-				}
-			}			
-			return Weapons;
-		}
-	}
-	SysMsg(Text['WeaponsNotFound'] .. job);
-}
-
+// Is character with index [i] (0,1,2) dead?
 Brain.GetResAbleTarget = func (i) {
 	if (IsExistMyPc(i) == 'YES') {
-		var Actor = Shovel.Actors[i+1];			
-		var success, friend = pcall(GetSelfActor, Actor.SelfAi);
+		var actor = Characters[i+1];			
+		var success, friend = pcall(GetSelfActor, actor.SelfAi);
 		if (success) {
 			success, result = pcall(IsDead, friend);
 			if (success) {
@@ -392,83 +254,34 @@ Brain.GetResAbleTarget = func (i) {
 		}			
 	}
 }
-	
+
+// Returns dead team member as target if exists.
 Brain.GetDeadTeamMember = func () {
 	return Brain.GetResAbleTarget(0) || Brain.GetResAbleTarget(1) || Brain.GetResAbleTarget(2);
 }
 
-Brain.ChangeStanceIfIncorrect = func(MyActor, stanceIndex) {
-	var uiFrame = GetFrameByName('charbaseinfo', MyActor.Index);
-	var uiControl = GetControl(uiFrame, 'STANCETAB');
-	var ctlLevel = GetNumber(uiControl);
-	var targetStance = Brain.GetTargetStance(MyActor, stanceIndex);
-
-	if (targetStance == nil) 
-	{
-		SysMsg(Text['IncorrectWeapon'] .. MyActor.Name);
-		return;
-	}
-	else
-	{
-		targetStance = targetStance - 1;
-	}
-	if (tonumber(ctlLevel) != tonumber(targetStance))
-	{
-		if (Shovel.IsDebug) SysMsg('[' .. MyActor.Name .. '] Changing stance from ' .. tostring(ctlLevel) .. ' to ' .. tostring(targetStance));
-		var LeaderIndex = GetLeaderIndex();
-		if (MyActor.Index != LeaderIndex) SelectMyPc(MyActor.Index);
-		sleep(100);
-		ChangeStance(tonumber(targetStance));
-		if (MyActor.Index != LeaderIndex) SelectMyPc(LeaderIndex);
-		sleep(2000);
-	} 
-}
-
-Brain.ChangeStanceIfIncorrectWithCall = func(MyActor, stanceIndex) {
- 	var uiFrame = GetFrameByName('charbaseinfo', MyActor.Index);
-	var uiControl = GetControl(uiFrame, 'STANCETAB');
-	var ctlLevel = GetNumber(uiControl);
-	var targetStance = Brain.GetTargetStance(MyActor, stanceIndex);
-	if (targetStance == nil) 
-	{
-		SysMsg(Text['IncorrectWeapon'] .. MyActor.Name);
-		return;
-	}
-	else
-	{targetStance = targetStance - 1;}
-	if (tonumber(ctlLevel) != tonumber(targetStance))
-	{
-		
-		if (Shovel.IsDebug) SysMsg('[' .. MyActor.Name .. '] Changing stance from ' .. tostring(ctlLevel) .. ' to ' .. tostring(targetStance));
-		
-		var LeaderIndex = GetLeaderIndex();
-		if (MyActor.Index != LeaderIndex) SelectMyPc(MyActor.Index);
-		Call();
-		sleep(100);
-		ChangeStance(tonumber(targetStance));
-		if (MyActor.Index != LeaderIndex) SelectMyPc(LeaderIndex);
-	} 
-	else {
-		var LeaderIndex = GetLeaderIndex();		
-		if (MyActor.Index != LeaderIndex) SelectMyPc(MyActor.Index);
-		Call();
-		sleep(1000);
-		if (MyActor.Index != LeaderIndex) SelectMyPc(tonumber(LeaderIndex));
-		sleep(1000);
-	}
-}
-
-Brain.GetTargetStance = func (MyActor, stanceIndex)
-{
-	var currentWeaponIndex = Interface.weaponIndexes[MyActor.Index + 1];
-	
-	for (key,value in pairs(MyActor.Weapons[currentWeaponIndex].Stances))
-	{
-		if (tonumber(value) == tonumber(stanceIndex))
-		{
-			return tonumber(key);
+// Returns true or false. Is selected stance correct?
+Brain.IsMyStanceCorrect = func(Actor, stance){
+	// Check for selected weapon
+	var selectedWeaponIsCorrect = false;
+	var currentWeapon = Actor.Settings.WeaponSets[Actor.Settings.WeaponIndex];
+    for (key, value in currentWeapon.Stances){
+		if (value.Id == stance.Id){
+			// if current weapon set contains stance, it mean selected weapon is correct
+			selectedWeaponIsCorrect = true;
 		}
 	}
+	
+	if (!selectedWeaponIsCorrect){
+		SysMsg(Text['IncorrectWeapon']);
+	}
+	
+	if (stance.Index == Characters.GetSelectedStanceIndex(Actor.Index)){
+		return true;
+	} else {
+		// index of stance and index of selected stance are different
+		return false;
+	}	
 }
 
 Brain.Load();

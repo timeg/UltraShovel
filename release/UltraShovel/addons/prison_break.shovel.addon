@@ -1,6 +1,6 @@
 Addons.Current.PrisonBreak = 
 {	
-	ListID = 5,
+	ListID = 4,
 	Name = "",
 	Description = "",
 	Author = "EatingPeopleIsFun",
@@ -94,13 +94,13 @@ Addons.Current.PrisonBreak.PrepareToStage = func() {
 
 		for	(i=1, Brain.GetCharsCount())
 		{
-			Settings['AutoPickChar' .. i] = true;
+			Characters[i].Settings.AutoPick = true;
 			Shovel.Actors[i].AutoAttack = true;
 		}
 		
-		Settings['Mode'] = 1;
-		Settings['KeepRange'] = 4000;
-		Settings['PickRange'] = 4000;
+		Settings.Family.Mode = 1;
+		Settings.Family.KeepRange = 4000;
+		Settings.Family.PickRange = 4000;
 		
 		SetPropertyNumber("NPC", "PRISON_MOUSE", "Scale", .01);
 		SetPropertyNumber("NPC", "PRISON_MOUSE_M", "Scale", .01);
@@ -113,9 +113,9 @@ Addons.Current.PrisonBreak.PrepareToStage = func() {
 		SetPropertyNumber("NPC", "PRISON_MOUSE", "Scale", 20);
 		SetPropertyNumber("NPC", "PRISON_MOUSE_M", "Scale", 20);
 		
-		Settings['Mode'] = 0;
-		Settings['KeepRange'] = 1000;
-		Settings['PickRange'] = 1000;
+		Settings.Family.Mode = 0;
+		Settings.Family.KeepRange = 1000;
+		Settings.Family.PickRange = 1000;
 	}
 }
 

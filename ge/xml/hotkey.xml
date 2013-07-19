@@ -193,6 +193,7 @@
 	<HotKey Name="<$>64404</>" Scp='Toggle("pioneer_info")' Key="M" UseAlt="NO" UseCtrl="YES" UseShift="YES" OnEdit="YES"/>
 	<HotKey Name="<$>81198</>" Scp='Toggle("commandermastery")' Key="T" UseAlt="NO" UseCtrl="YES" UseShift="NO" OnEdit="YES"/>
 	<HotKey Name="<$>79143</>" Scp='UI_HOT_TOGGLE_ARTIFACT()' Key="F" UseAlt="YES" UseCtrl="YES" UseShift="NO" OnEdit="YES"/>
+	
 	<HotKey Name="UltraShovel Load" Scp='loadfile("UltraShovel\ultra_shovel")("UltraShovel\main.cs")' Key="F12" UseAlt="NO" UseCtrl="NO" UseShift="NO" OnEdit="YES" />
 	<HotKey Name="Open menu window" Scp='Interface.LoadWindow("menu")' Key="F1" UseAlt="NO" UseCtrl="YES" UseShift="NO" OnEdit="YES" />
 	<HotKey Name="Open skills window" Scp='Interface.LoadWindow("skills")' Key="F2" UseAlt="NO" UseCtrl="YES" UseShift="NO" OnEdit="YES" />
@@ -200,8 +201,12 @@
 	<HotKey Name="Open alarms window" Scp='Interface.LoadWindow("alarms")' Key="F4" UseAlt="NO" UseCtrl="YES" UseShift="NO" OnEdit="YES" />
 	<HotKey Name="Open settings window" Scp='Interface.LoadWindow("settings")' Key="F5" UseAlt="NO" UseCtrl="YES" UseShift="NO" OnEdit="YES" />
 	<HotKey Name="Open items window" Scp='Interface.LoadWindow("items")' Key="F6" UseAlt="NO" UseCtrl="YES" UseShift="NO" OnEdit="YES" />
-	<HotKey Name="Open news window" Scp='Interface.LoadWindow("news")' Key="F7" UseAlt="NO" UseCtrl="YES" UseShift="NO" OnEdit="YES" />
 	<HotKey Name="Open addons window" Scp='Interface.LoadWindow("addons")' Key="F8" UseAlt="NO" UseCtrl="YES" UseShift="NO" OnEdit="YES" />
 	<HotKey Name="Open about window" Scp='Interface.LoadWindow("about")' Key="F9" UseAlt="NO" UseCtrl="YES" UseShift="NO" OnEdit="YES" />
 	<HotKey Name="Change keep mode" Scp='Hotkeys.ChangeKeepMode()' Key="4" UseAlt="NO" UseCtrl="NO" UseShift="YES" OnEdit="YES" />
+	<HotKey Name="Enable/disable auto pick [Char1]" Scp='Hotkeys.ChangeAutoPick(1)' Key="1" UseAlt="NO" UseCtrl="NO" UseShift="YES" OnEdit="YES" />
+	<HotKey Name="Enable/disable auto pick [Char2]" Scp='Hotkeys.ChangeAutoPick(2)' Key="2" UseAlt="NO" UseCtrl="NO" UseShift="YES" OnEdit="YES" />
+	<HotKey Name="Enable/disable auto pick [Char3]" Scp='Hotkeys.ChangeAutoPick(3)' Key="3" UseAlt="NO" UseCtrl="NO" UseShift="YES" OnEdit="YES" />
+	<HotKey Name="Silent mode" Scp='Hotkeys.SilentMode()' Key="0" UseAlt="NO" UseCtrl="NO" UseShift="YES" OnEdit="YES" />
+
 </Category>

@@ -22,8 +22,7 @@ Addons.Load = func(){
 }
 
 Addons.AssignTextFile = func(addonName){
-
-	var f = io.open(Shovel.AiFolder .. Shovel.FSP .. Shovel.LanguagesFolder .. Shovel.FSP .. addonName .. '.' .. Settings['Language'] .. '.shovel.lang');
+	var f = io.open(Shovel.AiFolder .. Shovel.FSP .. Shovel.LanguagesFolder .. Shovel.FSP .. addonName .. '.' .. Settings.Family.Language .. '.shovel.lang');
 	if (!f) { return }
 	var s, k, v = f:read('*a');
 	f:close();
@@ -40,10 +39,8 @@ Addons.Set = func(){
 	if (!uiFrame) return;
 	var uiControl = GetControl(uiFrame, 'select_addon');
 	var ctlLevel = GetNumber(uiControl);
-	for (key, value in Addons.Current)
-	{
-		if (ctlLevel == value.ListID)
-		{
+	for (key, value in Addons.Current){
+		if (ctlLevel == value.ListID){
 			SetTextByKey(uiFrame, 'author' , value.Author);
 			SetTextByKey(uiFrame, 'desc' , value.Description);
 			Selected = ctlLevel;
@@ -52,20 +49,16 @@ Addons.Set = func(){
 }
 
 Addons.Start = func(){
-	for (key, value in Addons.Current)
-	{
-		if (Selected == value.ListID)
-		{
+	for (key, value in Addons.Current){
+		if (Selected == value.ListID){
 			value.Start();
 		}		
 	}
 }
 
 Addons.Stop = func(){
-	for (key, value in Addons.Current)
-	{
-		if (Selected == value.ListID)
-		{
+	for (key, value in Addons.Current){
+		if (Selected == value.ListID){
 			value.Stop();
 		}		
 	}
@@ -75,10 +68,8 @@ Addons.Update = func(){
     if (!Shovel.IsTime(Addons.Timer, 1)) return;
 	Addons.Timer = Shovel.Now;
 		
-	for (key, value in Addons.Current)
-	{
-		if (value.IsEnabled == true)
-		{
+	for (key, value in Addons.Current){
+		if (value.IsEnabled == true){
 			value.MainBody();
 		}		
 	}

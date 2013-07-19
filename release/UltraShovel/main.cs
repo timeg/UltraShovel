@@ -1,12 +1,9 @@
-if (Shovel) 
-{
+if (Shovel){
 	var status, rez = pcall(Shovel.Unload);
 		if (!status) SysMsg(rez);
-} 
-else 
-{
+} else {
 	Shovel = {
-		AIVersion = 		"Release 1.34", 
+		AIVersion = 		"Release 2.01", 
 		Name = 				"UltraShovel",
 		Commander = 		GetMyCommanderName(), 
 		Region = 			GetNation(), 
@@ -14,7 +11,6 @@ else
 		Ext = 				".cs",
 		LanguagesFolder = 	"languages",
 		ModulesFolder =		"modules",
-		CharsFolder = 		"chars",
 		SoundsFolder = 		"sounds",
 		AiFolder = 			"UltraShovel",
 		SettingsFolder =	"settings",
@@ -26,23 +22,19 @@ else
 		WINEOL = 			string.char(10),
 		Passed = 			0,
 		Now =				0,
-		Actors = {},
-		CharsCounter = 1,
-		Chars = {},
 		_G_ = { SysMsg = SysMsg , GetNation = GetNation, sleep = sleep},
-		IsReady = false,
-		IsUnloading = false,
 		IsDebug = false,
 		Farm = false
 	}	
-		
-	SysMsg = func (text) { Shovel._G_.SysMsg(os.date('[%X] ')..tostring(text)); }
-	GetNation = func () { var x = Shovel._G_.GetNation(); if (x == '') return 'SEA'; else return x; }	
 	
+	// Replaced SysMsg function
+	SysMsg = func (text) { Shovel._G_.SysMsg(os.date('[%X] ')..tostring(text)); }
+	// Replaced GetNation function
+	GetNation = func () { var x = Shovel._G_.GetNation(); if (x == '') return 'SEA'; else return x; }	
+	// Get current region
 	Shovel.Region = GetNation();
 	
 	Shovel.Unload = func (){
-		IsUnloading = true;
 		ChangeTactics("TS_NONE");
 		var k, v;
 		if (Shovel._G_) 
@@ -58,20 +50,18 @@ else
 		Interface.ShowMini(Text['GoodByeMessage']);		
 		Interface.CloseAll();
 		System.UnloadModules();
-		Shovel.Actors = nil;
+		
 		Shovel = nil;
 	}
 
+	// Main initialization method
 	Shovel.Initialize = func(){
 		pcall(dofile, Shovel.AiFolder .. Shovel.FSP .. Shovel.ModulesFolder .. Shovel.FSP .. 'system' .. Shovel.Ext );
 		Shovel.LoadAI();
 		Close('tutomessage');
-		Shovel.Actors[1] = {};
-		Shovel.Actors[2] = {};
-		Shovel.Actors[3] = {};
-		Shovel.CharsCounter = 1;
+		Settings.Load();
+		
 		ShowAllPcLevel();	
-		Settings.LoadFamily();
 		SelectAll();
 		SetAllSelectMode();
 		ChangeTactics("TS_NONE");
@@ -94,138 +84,119 @@ else
 			}
 		}
 	}
-		
+	
+	// Method returns true if passed more then [seconds] since [time]
 	Shovel.IsTime = func (time, seconds, now) {
-		if (time) 
-		{
+		if (time){
 			if (now) return (tonumber(now) - tonumber(time)) >= tonumber(seconds);
 			return (tonumber(Shovel.Now) - tonumber(time)) >= tonumber(seconds);
 		}
 		return false;
 	}
 	
+	// Replaced sleep method
 	sleep = func (ms) {
-		if (Shovel.IsUnloading) return;
+		// call updates for modules if needed
+		// each sleep [very often]
 		Interface.Update();
 		Alarms.Update();
 		Brain.AutoPotions();
 		Shovel.Passed = Shovel.Passed + tonumber(ms);
+		// call updates each 1 sec
 		if (Shovel.Passed >= 1000) {
 			Shovel.Now = os.difftime(os.time(), Shovel.GameStartTime);
 			Shovel.Passed = 0;
 			if (sGeWithTheShovel) sGeWithTheShovel.Monitoring();
 			Addons.Update();
+			Brain.AutoItems();
 		}
+		// call base method
 	    Shovel._G_.sleep(tonumber(ms));
 	}
-	
+
+	// Main SCR_TS_MOVE function replaced by UltraShovel
 	Shovel.SCR_TS_NONE = func (self) {	
 		Shovel.Prepare(self, "None");
-		while (!Shovel.IsReady) sleep(200);
-				
-		var AiActor = Brain.GetActorBySelf(self);	
-
-		if (Shovel.Farm)
-		{
-			Shovel.TryReturnToFarm(AiActor);
+		
+		var aiIndex = Characters.GetAiIndex(self);	
+		if (aiIndex == nil){
+			SysMsg('Something wrong with character');
 		}
 		
-		while(true && !Shovel.IsUnloading && Shovel.IsReady)
-		{
+		if (Shovel.Farm){
+			Brain.ReturnToFarm(Characters[aiIndex]);
+		}
+		
+		while(true){
 			sleep(200);
-			Brain.UserTarget(AiActor);
+			Brain.UserTarget(Characters[aiIndex]);
 		}
 	}
-	
+		
+	// Main SCR_TS_MOVE function replaced by UltraShovel	
 	Shovel.SCR_TS_MOVE = func (self) { 		
 		Shovel.Prepare(self, "Move");
-		while (!Shovel.IsReady) sleep(200);
 
-		var AiActor = Brain.GetActorBySelf(self);	
+		var aiIndex = Characters.GetAiIndex(self);	
+		if (aiIndex == nil){
+			SysMsg('Something wrong with character');
+		}
 		
-		if (Shovel.Farm)
-		{
-			Shovel.TryReturnToFarm(AiActor);
+		if (Shovel.Farm){
+			Brain.ReturnToFarm(Characters[aiIndex]);
 		}
 				
-		while(true && !Shovel.IsUnloading && Shovel.IsReady)
-		{	
+		while(true){	
 			sleep(200);
-			Brain.UserTarget(AiActor);
+			Brain.UserTarget(Characters[aiIndex]);
 		}		
 	}
 
+	// Main SCR_TS_KEEP function replaced by UltraShovel
 	Shovel.SCR_TS_KEEP = func (self){ 
 		Shovel.Prepare(self, "Keep");
-		
-		while (!Shovel.IsReady) sleep(200);
-								
-		var AiActor = Brain.GetActorBySelf(self);	
-		
-		Settings.SaveActor(AiActor);
-		if (IsLeader(GetAiActor(self)) == 'YES' )
-		{
-			Settings.SaveFamily();
+										
+		var aiIndex = Characters.GetAiIndex(self);	
+		if (aiIndex == nil){
+			SysMsg('Something wrong with character');
 		}
 		
-		while(true && !Shovel.IsUnloading && Shovel.IsReady)
-		{	
+		// save current char settings each time when user press space
+		Characters.Save(aiIndex);
+		// call IsLeader makes us possible to be sure
+		// {if} block will be called once
+		if (IsLeader(GetAiActor(self)) == 'YES' ){
+			Settings.Save();
+		}
+		
+		while(true){	
 			sleep(100);
-			Brain.AutoAttack(AiActor);
-			Brain.AutoPick(AiActor);	
-			Brain.AutoItems(AiActor);
-			Brain.UserTarget(AiActor);
-			Brain.AutoSkill(AiActor);
-			Brain.KeepPosition(AiActor);
-			Brain.KnockdownProtect(AiActor);
-		}
-		
-	}
 			
-
+			Brain.AutoAttack(Characters[aiIndex]);
+			Brain.AutoPick(Characters[aiIndex]);	
+			Brain.AutoBullets(Characters[aiIndex]);
+			Brain.UserTarget(Characters[aiIndex]);
+			Brain.AutoSkills(Characters[aiIndex]);
+			Brain.KeepPosition();
+		}		
+	}
+				
+	// Call this method at start of each SCR_TS
+	// it helps to handle existing/new chars
 	Shovel.Prepare = func(self, stance) {
 		sleep(100);
-		if (Shovel.IsDebug) SysMsg(stance .. " + " .. Brain.GetAiIndex(self));
-		Brain.HandleActor(self);
-	}
-	
-	Shovel.TryReturnToFarm = func(Actor)	{	
-		if (tonumber(Settings['Mode']) == 0)
-		{			
-			while (IsNearFromKeepDestPosition(Actor.SelfAi, 50) != 'YES')
-			{			
-				KeepDestMoveTo(Actor.SelfAi);
-				sleep(1000);
-			}
-			SysMsg('Returned to farm');
-			ChangeTacticsAi(Actor.SelfAi, 'TS_KEEP');
-		}
-		else
-		{
-			Keep();
-		}
-	}
-	
-	Shovel.ReInit = func()	{
-		if (Shovel.IsDebug) SysMsg("Re-Initialization");
-		for (i = 1,3)
-		{ 
-			Shovel.Actors[i] = nil;
-			Shovel.Actors[i] = {};
-		}
-		Shovel.IsReady = false;
-		Shovel.CharsCounter = 1;
 		
-		Shovel.Chars = nil;
-		Shovel.Chars = {};
-		System.LoadCharacters();
+		var aiIndex = Characters.GetAiIndex(self);
+		if (aiIndex != nil){
+			if (Shovel.IsDebug) SysMsg(stance .. " + " .. aiIndex);
+		}
 		
-		SelectAll();
-		SetAllSelectMode();
+		Characters.Handle(self);	
 		
-		ChangeTactics("TS_NONE");
+		// cant start farm with non-initialized chars
+		while (!Characters.AreInitialized) sleep(200);
 	}
-	
+			
 	Shovel.SCR_ATTACKER_TS_NONE = Shovel.SCR_TS_NONE;
 	Shovel.SCR_ATTACKER_TS_MOVE = Shovel.SCR_TS_MOVE;
 	Shovel.SCR_ATTACKER_TS_KEEP = Shovel.SCR_TS_KEEP;
@@ -236,5 +207,6 @@ else
 	Shovel.SCR_PUPPET_TS_MOVE = Shovel.SCR_TS_MOVE;
 	Shovel.SCR_PUPPET_TS_KEEP = Shovel.SCR_TS_KEEP;
 	 
-	Shovel.Initialize();	
+	Shovel.Initialize();
+	
 }

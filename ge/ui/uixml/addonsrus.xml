@@ -7,7 +7,6 @@
 		<listboxitem parent = "select_addon" caption = "Броад спаммер" id="id_bs"/>
 	    <listboxitem parent = "select_addon" caption = "Инъекция" id="id_ci"/>
 	    <listboxitem parent = "select_addon" caption = "Тюремные мышки" id="id_pm"/>
-	    <listboxitem parent = "select_addon" caption = "Склад всегда с собой" id="id_wa"/>
 		<listboxitem parent = "select_addon" caption = "Магазин всегда с собой" id="id_sa"/>
 		<listboxitem parent = "select_addon" caption = "Побег из тюрьмы" id="id_pb"/>
 	<text name="title" caption="%s" param1="t" fontname="itemlistboxoption_feso" rect="50 55 10 10" alignx="left" aligny="top"/>

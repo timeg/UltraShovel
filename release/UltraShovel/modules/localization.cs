@@ -7,7 +7,7 @@ Text.Unload = func (){
 }
 
 Text.Load = func(){	
-	Text.LoadLanguage(Settings["Language"]);
+	Text.LoadLanguage(Settings.Family.Language);
 	if (Shovel.IsDebug) SysMsg("Localization loaded");
 }
 

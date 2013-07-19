@@ -1,1 +1,0 @@
-@dir /b /on *.cs > characters_list.shovel

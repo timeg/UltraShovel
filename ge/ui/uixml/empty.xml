@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="windows-1251"?>
+
+<uiframe name="Empty" class="empty" x="0" y="0" width="20" height="20" moveable="false" align="left top">
+	<text name="EmptyLabel" caption="%s" param1="emptyLabel" rect="0 0 10 10" alignx="left" aligny="top"/>
+</uiframe>

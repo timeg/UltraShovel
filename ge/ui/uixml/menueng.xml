@@ -14,8 +14,6 @@
 	<imgbutton name="OPEN_SETTINGS_WINDOW" rect="310 150 64 64" LBtnDownSE="sys_uibottonclick2.ogg" img="\illust\it_e_torschegear.bmp" imgrect="0 0 64 64" LBtnUpScp="Interface.LoadWindow('settings')"/>
 	<text name="items" caption="[%s]" param1="it" fontname="itemlistboxoption_feso" rect="40 220 10 10" alignx="left" aligny="top"/>
 	<imgbutton name="OPEN_ITEMS_WINDOW" rect="40 240 64 64" LBtnDownSE="sys_uibottonclick2.ogg" img="\illust\it_e_dbox.bmp" imgrect="0 0 64 64" LBtnUpScp="Interface.LoadWindow('items')"/>
-	<text name="news" caption="[%s]" param1="ne" fontname="itemlistboxoption_feso" rect="130 220 10 10" alignx="left" aligny="top"/>
-	<imgbutton name="OPEN_NEWS_WINDOW" rect="130 240 64 64" LBtnDownSE="sys_uibottonclick2.ogg" img="\illust\it_e_recallau.bmp" imgrect="0 0 64 64" LBtnUpScp="Interface.LoadWindow('news')"/>
 	<text name="addons" caption="[%s]" param1="ad" fontname="itemlistboxoption_feso" rect="220 220 10 10" alignx="left" aligny="top"/>
 	<imgbutton name="OPEN_ADDONS_WINDOW" rect="220 240 64 64" LBtnDownSE="sys_uibottonclick2.ogg" img="\illust\it_e_chrscoin.bmp" imgrect="0 0 64 64" LBtnUpScp="Interface.LoadWindow('addons')"/>
 	<text name="about" caption="[%s]" param1="ab" fontname="itemlistboxoption_feso" rect="310 220 10 10" alignx="left" aligny="top"/>
