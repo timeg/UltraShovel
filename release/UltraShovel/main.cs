@@ -3,7 +3,7 @@ if (Shovel){
 		if (!status) SysMsg(rez);
 } else {
 	Shovel = {
-		AIVersion = 		"Release 2.01", 
+		AIVersion = 		"Release 2.02", 
 		Name = 				"UltraShovel",
 		Commander = 		GetMyCommanderName(), 
 		Region = 			GetNation(), 

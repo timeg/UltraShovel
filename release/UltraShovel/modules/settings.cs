@@ -7,29 +7,6 @@ Settings = {
 	UpdateInventoryTime = 10,
 	// public settings for user
 	
-	AutoItems = {
-		[1] = { Num = 0, InUse = false, Time = 30 },
-		[2] = { Num = 0, InUse = false, Time = 30 },
-		[3] = { Num = 0, InUse = false, Time = 30 },
-		[4] = { Num = 0, InUse = false, Time = 30 },
-		[5] = { Num = 0, InUse = false, Time = 30 },
-		[6] = { Num = 0, InUse = false, Time = 30 },
-		[7] = { Num = 0, InUse = false, Time = 30 },
-	},
-	CallAtPartyBuff = true,
-	UseSimpleAlarm = true,
-	KeepRange = 1000,
-	PickRange = 1000,
-	ReportAlarm = false,
-	InventoryAlarm = false,
-	ReportAlarmSound = "Animal_Chicken",
-	InventoryAlarmSound = "Club_Animals",
-	DeadAlarmSound = "Club_Animals",
-	ReturnTime = 10,
-	CallTime = 5,
-	Mode = 0,
-	Language = "rus",
-	
 	Family = {
 		AutoItems = {
 			[1] = { Num = 0, InUse = false, Time = 30 },

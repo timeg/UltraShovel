@@ -63,12 +63,12 @@ Addons.Current.PrisonBreak.MainBody = func(){
 	if (Addons.Current.PrisonBreak.Stage == 2) 
 	{		
 		if (Addons.Current.PrisonBreak.IsEnd()) return;
-		var theAi = GetAiActor(Shovel.Actors[GetLeaderIndex()+1].Self);
+		var theAi = GetAiActor(Characters[GetLeaderIndex()+1].Self);
 		if (IsMoving(theAi) == 'YES'){ return;}			
 						
-		for (i = 1, Brain.GetCharsCount())
+		for (i = 1, Characters.Count())
 		{
-			if (Brain.AutoPick(Shovel.Actors[i]))
+			if (Brain.AutoPick(Characters[i]))
 			{	
 				Addons.Current.PrisonBreak.Status = Addons.Current.PrisonBreak.Text['Picking'];
 				Addons.Current.PrisonBreak.ShowMessage();
@@ -92,15 +92,16 @@ Addons.Current.PrisonBreak.MainBody = func(){
 Addons.Current.PrisonBreak.PrepareToStage = func() {
 	if (Addons.Current.PrisonBreak.Stage == 1)	{
 
-		for	(i=1, Brain.GetCharsCount())
+		for	(i=1, Characters.Count())
 		{
 			Characters[i].Settings.AutoPick = true;
-			Shovel.Actors[i].AutoAttack = true;
+			Characters[i].Settings.AutoAttack = true;
 		}
 		
 		Settings.Family.Mode = 1;
 		Settings.Family.KeepRange = 4000;
 		Settings.Family.PickRange = 4000;
+		Shovel.Farm = true;
 		
 		SetPropertyNumber("NPC", "PRISON_MOUSE", "Scale", .01);
 		SetPropertyNumber("NPC", "PRISON_MOUSE_M", "Scale", .01);
@@ -116,6 +117,7 @@ Addons.Current.PrisonBreak.PrepareToStage = func() {
 		Settings.Family.Mode = 0;
 		Settings.Family.KeepRange = 1000;
 		Settings.Family.PickRange = 1000;
+		Shovel.Farm = false;
 	}
 }
 

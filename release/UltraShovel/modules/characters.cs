@@ -455,18 +455,22 @@ Characters.GetBuffDuration = func(descCode, skillId){
 	var uiFrame = GetFrameByName('empty');
 	if (!uiFrame){
 		SysMsg('Error while creating >empty< frame');
-		return 15;
+		return 15000;
 	}
 	
 	SetTextByKey(uiFrame, 'emptyLabel' , descCode);
 	var text = GetTextByKey(uiFrame, 'emptyLabel');	
-	
 	var result = string.gfind(text, 'Duration%s:%s([%d]+)%s([%w]+)');
 	var duration, metric = result();
 	if (duration == nil) {
-		SysMsg('Error while calculating buff duration for skill with id ' .. skillId);
-		SysMsg('Using default value [15]');
-		duration = 15;
+		// try another way
+		result = string.gfind(text, 'Duration%s([%d]+)%s([%w]+)');
+		duration, metric = result();
+		if (duration == nil){
+			if (Shovel.IsDebug) SysMsg('Error while calculating buff duration for skill with id ' .. skillId);
+			if (Shovel.IsDebug) SysMsg('Using default value [15]');
+			duration = 15;
+		}		
 	}
 	Close('Empty');
 	return duration * 1000;
