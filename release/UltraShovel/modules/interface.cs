@@ -380,6 +380,13 @@ Interface.ChangeSkillUse = func(charIndex, skillIndex){
 	if (!Characters.AreInitialized) return;
 	var i = tonumber(charIndex);	
 	var sindex = tonumber(skillIndex);
+	
+	if (sindex == 6){
+	// job skill
+		Characters[i].Settings.JobSkill.InUse = !Characters[i].Settings.JobSkill.InUse;
+		return;
+	}
+	
 	// get current weapon
 	var currentWeapon = Characters[i].Settings.WeaponSets[Characters[i].Settings.WeaponIndex];
 	// get current stance
@@ -391,9 +398,8 @@ Interface.ChangeSkillUse = func(charIndex, skillIndex){
 		return;
 	}
 	
-	// heh, very long string to inverse InUse parameter inside skill
-	Characters[i].Settings.WeaponSets[Characters[i].Settings.WeaponIndex].Stances[Interface.StancesIndexes[i]].Skills[sindex].InUse =
-	!Characters[i].Settings.WeaponSets[Characters[i].Settings.WeaponIndex].Stances[Interface.StancesIndexes[i]].Skills[sindex].InUse;
+	var skill = currentStance.Skills[sindex];
+	skill.InUse = !skill.InUse;
 }
 
 // Call this method to switch skill Timing parameter 
