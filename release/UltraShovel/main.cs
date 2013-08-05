@@ -3,7 +3,7 @@ if (Shovel){
 		if (!status) SysMsg(rez);
 } else {
 	Shovel = {
-		AIVersion = 		"Release 2.03", 
+		AIVersion = 		"Release 2.05", 
 		Name = 				"UltraShovel",
 		Commander = 		GetMyCommanderName(), 
 		Region = 			GetNation(), 
@@ -59,7 +59,6 @@ if (Shovel){
 		pcall(dofile, Shovel.AiFolder .. Shovel.FSP .. Shovel.ModulesFolder .. Shovel.FSP .. 'system' .. Shovel.Ext );
 		Shovel.LoadAI();
 		Close('tutomessage');
-		Settings.Load();
 		
 		ShowAllPcLevel();	
 		SelectAll();

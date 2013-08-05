@@ -66,7 +66,6 @@ Interface.LoadWindow = func(window){
 }
 
 // Controls
-
 Interface.SetCheckBox = func(frame, checkBoxName, value){
 	var uiCheckBox = GetCheckBox(frame, checkBoxName);
 	var newValue = 0;
@@ -595,9 +594,12 @@ Interface.SetSettings = func (type, param, charIndex){
 	
 	if (tostring(type) == 'checkactor'){
 		var index = tonumber(charIndex);
-		if (tostring(param) == 'autoattack' .. tostring(charIndex)){
+		if (tostring(param) == 'autoattack'){
 			Characters[index].Settings.AutoAttack = !Characters[index].Settings.AutoAttack;
-		}		
+		}
+		if (tostring(param) == 'autopick'){
+			Characters[index].Settings.AutoPick = !Characters[index].Settings.AutoPick;
+		}				
 	}
 	
 	if (tostring(type) == 'mode')

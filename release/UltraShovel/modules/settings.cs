@@ -50,7 +50,7 @@ Settings.Load = func(){
 	var settings = System.LoadTableFromFile(fileName);
 	if (settings != nil){
 		Settings.Family = settings;
-		SysMsg(Text['SettingsLoadedForFamily'] .. Shovel.Commander);
+		if (Shovel.IsDebug) SysMsg('Settings loaded for family ' .. Shovel.Commander);
 	}
 }
 
@@ -63,3 +63,4 @@ Settings.ChangeLanguage = func(){
 	if (Shovel.IsDebug) SysMsg('Language changed');
 }
 
+Settings.Load();

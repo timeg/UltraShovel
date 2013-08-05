@@ -14,15 +14,15 @@
 	<text name="name1" caption="%s" param1="n1" fontname="itemlistboxoption_feso" rect="50 130 10 10" alignx="left" aligny="top"/>
 	<text name="name2" caption="%s" param1="n2" fontname="itemlistboxoption_feso" rect="200 130 10 10" alignx="left" aligny="top"/>
 	<text name="name3" caption="%s" param1="n3" fontname="itemlistboxoption_feso" rect="350 130 10 10" alignx="left" aligny="top"/>	
-	<checkbox name="AutoPickChar1" rect="30 130 10 10" SelectScp="Interface.SetSettings('check', 'AutoPickChar1')"/>
-	<checkbox name="AutoPickChar2" rect="180 130 10 10" SelectScp="Interface.SetSettings('check', 'AutoPickChar2')"/>
-	<checkbox name="AutoPickChar3" rect="330 130 10 10" SelectScp="Interface.SetSettings('check', 'AutoPickChar3')"/>	
+	<checkbox name="AutoPickChar1" rect="30 130 10 10" SelectScp="Interface.SetSettings('checkactor', 'autopick', 1)"/>
+	<checkbox name="AutoPickChar2" rect="180 130 10 10" SelectScp="Interface.SetSettings('checkactor', 'autopick', 2)"/>
+	<checkbox name="AutoPickChar3" rect="330 130 10 10" SelectScp="Interface.SetSettings('checkactor', 'autopick', 3)"/>	
 	<text name="name11" caption="%s" param1="n1" fontname="itemlistboxoption_feso" rect="50 190 10 10" alignx="left" aligny="top"/>
 	<text name="name12" caption="%s" param1="n2" fontname="itemlistboxoption_feso" rect="200 190 10 10" alignx="left" aligny="top"/>
 	<text name="name13" caption="%s" param1="n3" fontname="itemlistboxoption_feso" rect="350 190 10 10" alignx="left" aligny="top"/>	
-	<checkbox name="AutoAttack1" rect="30 190 10 10" SelectScp="Interface.SetSettings('checkactor', 'autoattack1', 1)"/>
-	<checkbox name="AutoAttack2" rect="180 190 10 10" SelectScp="Interface.SetSettings('checkactor', 'autoattack2', 2)"/>
-	<checkbox name="AutoAttack3" rect="330 190 10 10" SelectScp="Interface.SetSettings('checkactor', 'autoattack3', 3)"/>			
+	<checkbox name="AutoAttack1" rect="30 190 10 10" SelectScp="Interface.SetSettings('checkactor', 'autoattack', 1)"/>
+	<checkbox name="AutoAttack2" rect="180 190 10 10" SelectScp="Interface.SetSettings('checkactor', 'autoattack', 2)"/>
+	<checkbox name="AutoAttack3" rect="330 190 10 10" SelectScp="Interface.SetSettings('checkactor', 'autoattack', 3)"/>			
 	<text name="retu" caption="%s" param1="re" fontname="white_13_ol" rect="200 255 10 10" alignx="left" aligny="top"/>	
 	<edit name="eac" rect="340 255 35 20"/>
 	<text name="sec" caption="секунд" fontname="white_13_ol" rect="380 255 10 10" alignx="left" aligny="top"/>
