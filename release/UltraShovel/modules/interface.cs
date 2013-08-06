@@ -431,6 +431,24 @@ Interface.ChangeTime = func(type, charIndex, skillIndex){
 	Interface.UpdateSkillsWindow(i);
 }
 
+Interface.DisableAllSkills = func(){
+	for (a = 1, Characters.Count()){
+		var actor = Characters[a];
+		for (i = 1, table.getn(actor.Settings.WeaponSets)){
+			var set = actor.Settings.WeaponSets[i];
+			for (j = 1, table.getn(set.Stances)){
+				var stance = set.Stances[j];
+				for (k = 1, 5){
+					var skill = stance.Skills[k];
+					skill.InUse = false;
+				}
+			}
+		}
+		Interface.UpdateSkillsWindow(a);
+	}
+	if (Shovel.IsDebug) SysMsg('Skills cleared');
+}
+
 // === AUTO-ITEMS WINDOW ===
 
 // Loads items window
@@ -599,7 +617,10 @@ Interface.SetSettings = func (type, param, charIndex){
 		}
 		if (tostring(param) == 'autopick'){
 			Characters[index].Settings.AutoPick = !Characters[index].Settings.AutoPick;
-		}				
+		}	
+		if (tostring(param) == 'deadalarm'){
+			Characters[index].Settings.DeadAlarm = !Characters[index].Settings.DeadAlarm;
+		}		
 	}
 	
 	if (tostring(type) == 'mode')

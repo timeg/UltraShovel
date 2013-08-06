@@ -11,9 +11,9 @@
 	<text name="name3" caption="%s" param1="n3" fontname="itemlistboxoption_feso" rect="350 135 10 10" alignx="left" aligny="top"/>
 	<checkbox name="RA" rect="270 60 10 10" SelectScp="Interface.SetSettings('check', 'ReportAlarm')"/>
 	<checkbox name="IA" rect="270 85 10 10" SelectScp="Interface.SetSettings('check', 'InventoryAlarm')"/>
-	<checkbox name="DeadAlarmChar1" rect="30 135 10 10" SelectScp="Interface.SetSettings('check', 'DeadAlarmChar1')"/>
-	<checkbox name="DeadAlarmChar2" rect="180 135 10 10" SelectScp="Interface.SetSettings('check', 'DeadAlarmChar2')"/>
-	<checkbox name="DeadAlarmChar3" rect="330 135 10 10" SelectScp="Interface.SetSettings('check', 'DeadAlarmChar3')"/>
+	<checkbox name="DeadAlarmChar1" rect="30 135 10 10" SelectScp="Interface.SetSettings('checkactor', 'deadalarm', 1)"/>
+	<checkbox name="DeadAlarmChar2" rect="180 135 10 10" SelectScp="Interface.SetSettings('checkactor', 'deadalarm', 2)"/>
+	<checkbox name="DeadAlarmChar3" rect="330 135 10 10" SelectScp="Interface.SetSettings('checkactor', 'deadalarm', 3)"/>
 	<edit name="ReportAlarmSound" rect="300 59 130 20"/>
 	<edit name="InventoryAlarmSound" rect="300 84 130 20"/>
 	<edit name="DeadAlarmSound" rect="300 109 130 20"/>

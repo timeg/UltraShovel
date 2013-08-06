@@ -119,7 +119,7 @@
 	<checkbox name="check34" caption="" rect="405 415 10 10" SelectScp="Interface.ChangeSkillUse(3, 4)"/>
 	<checkbox name="check35" caption="" rect="460 415 10 10" SelectScp="Interface.ChangeSkillUse(3, 5)"/>
 	<checkbox name="check36" caption="" rect="530 415 10 10" SelectScp="Interface.ChangeSkillUse(3, 6)"/>	
-	<button name="disable_all" caption="Clear list of skills" rect="20 500 200 24" LBtnUpScp="Interface.SwitchAll('on', 'skills')"/>
+	<button name="disable_all" caption="Clear list of skills" rect="20 500 200 24" LBtnUpScp="Interface.DisableAllSkills()"/>
 	<button name="back" caption="Back" rect="500 500 70 24" LBtnUpScp="Interface.LoadWindow('menu')"/>	
 	<tooltip name="disable_all_tip" parent="disable_all" caption="Clear the list of skills for all characters" fontname="sandyellow_12_ol" width="256"/>
 	<tooltip name="back_tip" parent="back" caption="Return to the main menu" fontname="sandyellow_12_ol" width="256"/>
