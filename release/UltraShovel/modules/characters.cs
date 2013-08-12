@@ -69,7 +69,7 @@ Characters.Handle = func(self){
 			DeadAlarm = false,
 			WeaponIndex = 1,
 			WeaponSets = Characters.LoadWeaponSets(id),
-			JobSkill = Characters.LoadSkill(GetDatatableNumberValue("Job", id, "JobSkill"))
+			JobSkill = Characters.LoadSkill(GetDataTableNumberValue("Job", id, "JobSkill"))
 		}
 	} else {
 		current.Settings = settings;		
@@ -294,7 +294,7 @@ Characters.SplitString = func(inputstr, sep){
 Characters.LoadAllPossibleChars = func(){
 	var currentJobIndex = 1;
 	for (i = 1, 199){
-		var currentJob = GetDatatableStringValue("Job", i, "ClassName");
+		var currentJob = GetDataTableStringValue("Job", i, "ClassName");
 		if (currentJob != nil){
 			Characters.Jobs[currentJobIndex] = {};
 			Characters.Jobs[currentJobIndex].Id = i;
@@ -322,7 +322,7 @@ Characters.FindIdByJobName = func(jobName){
 Characters.LoadWeaponSets = func(id){
 	// each char has weapon sets
 	// get weapon sets for char with id
-	var weaponSetsString = GetDatatableStringValue("Job", id, "EqpWeaponSet");
+	var weaponSetsString = GetDataTableStringValue("Job", id, "EqpWeaponSet");
 	// split weapon sets string, it looks like "xxx,xxx,xxx,xxx"
 	var weaponSets = Characters.SplitString(weaponSetsString, ',');
 	// get num of weaponSets
@@ -335,8 +335,8 @@ Characters.LoadWeaponSets = func(id){
 		// get id
 		result[i].Id = weaponSets[i];
 		// get weapons
-		result[i].LeftHand = GetDatatableStringValue("StanceCondition", weaponSets[i], "LHand");
-		result[i].RightHand = GetDatatableStringValue("StanceCondition", weaponSets[i], "RHand");
+		result[i].LeftHand = GetDataTableStringValue("StanceCondition", weaponSets[i], "LHand");
+		result[i].RightHand = GetDataTableStringValue("StanceCondition", weaponSets[i], "RHand");
 		// load stances
 		result[i].Stances = Characters.LoadStancesInWeaponSet(weaponSets[i]);
 	}
@@ -351,7 +351,7 @@ Characters.LoadStancesInWeaponSet = func(weaponSetId){
 	while (stanceIndex <= 6)
 	{
 		// get stance id
-		stanceId = GetDatatableNumberValue("StanceCondition", weaponSetId, "Stance" .. stanceIndex);
+		stanceId = GetDataTableNumberValue("StanceCondition", weaponSetId, "Stance" .. stanceIndex);
 		// if id like 0, it means no more stances to read
 		if (stanceId == 0) break;
 		// fill info about stance
@@ -379,11 +379,11 @@ Characters.LoadStance = func(stanceId){
 	// get id
 	stance.Id = stanceId;
 	// get name
-	stance.Name = GetDatatableStringValue("Stance", stanceId, "EngName");
+	stance.Name = GetDataTableStringValue("Stance", stanceId, "EngName");
 	stance.Skills = {};
 	// load each skill
 	for (i = 1, 5){
-		skillId = GetDatatableNumberValue("Stance", stanceId, "SkillID" .. i);
+		skillId = GetDataTableNumberValue("Stance", stanceId, "SkillID" .. i);
 		stance.Skills[i] = Characters.LoadSkill(skillId);
 	}
 	return stance;
@@ -401,13 +401,13 @@ Characters.LoadSkill = func(skillId){
 	var skill = {};
 	// get id
 	skill.Id = skillId;
-	skill.Target = GetDatatableStringValue("Skill", skillId, "Target");	
+	skill.Target = GetDataTableStringValue("Skill", skillId, "Target");	
 	skill.InUse = false;
 	skill.UsageTime = -1000;
 	skill.IsTeamBuff = false;
 	
 	// get picture
-	var picName = GetDatatableStringValue("Skill", skillId, "FileName");
+	var picName = GetDataTableStringValue("Skill", skillId, "FileName");
 	if (picName == nil){
 		skill.Picture = 'none';
 	} else {
@@ -415,20 +415,20 @@ Characters.LoadSkill = func(skillId){
 	}
 		
 	// getting params for calculating timing
-	var castTime = GetDatatableNumberValue("Skill", skillId, "CastTime");
-	var coolDown = GetDatatableNumberValue("Skill", skillId, "CoolDown");	
-	var holdTime = GetDatatableNumberValue("Skill", skillId, "HoldTime");
+	var castTime = GetDataTableNumberValue("Skill", skillId, "CastTime");
+	var coolDown = GetDataTableNumberValue("Skill", skillId, "CoolDown");	
+	var holdTime = GetDataTableNumberValue("Skill", skillId, "HoldTime");
 	var duration = 0;
 		
 	if (skill.Target == 'None' || skill.Target == 'Party'){
-		var buffId = GetDatatableNumberValue("Skill", skillId, "BuffID");
+		var buffId = GetDataTableNumberValue("Skill", skillId, "BuffID");
 		
 		if (buffId != 0){
-			var descriptionCode = GetDatatableStringValue("Skill", skillId, "SpecDesc10");
+			var descriptionCode = GetDataTableStringValue("Skill", skillId, "SpecDesc10");
 			duration = Characters.GetBuffDuration(descriptionCode, skillId);
 			// is a team buff?
-			var useType = GetDatatableStringValue("Skill", skillId, "UseType");
-			var onTeam = GetDatatableStringValue("Skill", skillId, "OnTeam");
+			var useType = GetDataTableStringValue("Skill", skillId, "UseType");
+			var onTeam = GetDataTableStringValue("Skill", skillId, "OnTeam");
 			if (useType == 'AREA' && onTeam == 'YES'){
 				skill.IsTeamBuff = true;
 			}
