@@ -17,6 +17,7 @@ Characters.Handle = func(self){
 	if (aiIndex == nil && Characters.AreInitialized){
 		if (Shovel.IsDebug) SysMsg('New chars detected');
 		Characters.CancelAll();
+		return;
 	}
 	if (Characters.AreInitialized) return;
 	
@@ -28,8 +29,7 @@ Characters.Handle = func(self){
 	}
 	
 	if (Shovel.IsDebug) SysMsg("Loading actor " .. i);
-	
-	
+		
 	var name = Characters.GetName(i);
 	var job = Characters.GetJobBySelf(self);	
 	
@@ -193,11 +193,15 @@ Characters.CancelAll = func(){
 	for(i = 1, 3){
 		Characters[i] = nil;
 	}
+	
 	Characters.AreInitialized = false;
 	Characters.CurrentIndex = 1;
 	
+	sleep(100);
 	SelectAll();
 	SetAllSelectMode();
+	SelectMyPc(0);
+	sleep(100);
 	
 	ChangeTactics("TS_NONE");
 }

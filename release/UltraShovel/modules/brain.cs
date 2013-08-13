@@ -93,6 +93,11 @@ Brain.AutoSkills = func(Actor){
 			}
 		}
 	}
+	
+	// use job skill
+	var skill = Actor.Settings.JobSkill;
+	var result = Brain.TryToUseSkill(Actor, nil, skill);
+	if (result) sleep(100);
 }
 
 // Character trying to use skill
@@ -102,12 +107,13 @@ Brain.TryToUseSkill = func(Actor, stance, skill){
 	if (!Shovel.IsTime(skill.UsageTime, skill.Timing)) return false;
 
 	// if selected stance is incorrect, then choose correct stance
-	if (!Brain.IsMyStanceCorrect(Actor, stance)){
-		Characters.ChangeStance(Actor.Index, stance.Index);
+	if (stance != nil){
+		if (!Brain.IsMyStanceCorrect(Actor, stance)){
+			Characters.ChangeStance(Actor.Index, stance.Index);
+		}
 	}
 	
 	if (Shovel.IsDebug) SysMsg('[' .. Actor.Name .. '] Skill: ' .. skill.Id);
-
 	// handle targets
 	if (skill.Target == 'Enemy'){
 		var curTarget = GetNearAtkableEnemy(Actor.SelfAi, Settings.Family.KeepRange);
