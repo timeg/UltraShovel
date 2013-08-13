@@ -9,19 +9,21 @@ Characters.Unload = func (){
 
 // === PUBLIC METHODS ===
 
-
 Characters.Handle = func(self){	
 	// this check needs when family change location
 	// or pick new chars in barracks
+	
 	var aiIndex = Characters.GetAiIndex(self);
-	if (aiIndex == nil && Characters.AreInitialized){
+	if (aiIndex != nil) return;
+	
+	if (Characters.CurrentIndex > 3){
 		if (Shovel.IsDebug) SysMsg('New chars detected');
 		Characters.CancelAll();
 		return;
 	}
-	if (Characters.AreInitialized) return;
 	
-	var i = Characters.CurrentIndex;
+	var i = GetSelfIndex(GetAiActor(self));
+	i = i + 1;
 	// [i] can't be more then 3, 3 chars is maximum :)
 	if (i > 3){
 		SysMsg('Something went wrong');
@@ -30,7 +32,7 @@ Characters.Handle = func(self){
 	
 	if (Shovel.IsDebug) SysMsg("Loading actor " .. i);
 		
-	var name = Characters.GetName(i);
+	var name = Characters.GetName(i);	
 	var job = Characters.GetJobBySelf(self);	
 	
 	// init [current] variable
@@ -38,7 +40,11 @@ Characters.Handle = func(self){
 	var current = {};
 	// get id by job
 	var id = Characters.FindIdByJobName(job);
-	if (id == 0) return;	
+	if (id == 0) 
+	{
+		SysMsg('Cant find character with job ' .. job);
+		return;	
+	}
 	
 	current.Job = job;	
 	current.Name = name;
@@ -198,9 +204,9 @@ Characters.CancelAll = func(){
 	Characters.CurrentIndex = 1;
 	
 	sleep(100);
+	SelectMyPc(0);
 	SelectAll();
 	SetAllSelectMode();
-	SelectMyPc(0);
 	sleep(100);
 	
 	ChangeTactics("TS_NONE");
