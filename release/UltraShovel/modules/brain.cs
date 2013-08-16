@@ -108,8 +108,10 @@ Brain.TryToUseSkill = func(Actor, stance, skill){
 
 	// if selected stance is incorrect, then choose correct stance
 	if (stance != nil){
-		if (!Brain.IsMyStanceCorrect(Actor, stance)){
-			Characters.ChangeStance(Actor.Index, stance.Index);
+		if (skill.Target != 'Corpse'){
+			if (!Brain.IsMyStanceCorrect(Actor, stance)){
+				Characters.ChangeStance(Actor.Index, stance.Index);
+			}
 		}
 	}
 	
@@ -145,6 +147,9 @@ Brain.TryToUseSkill = func(Actor, stance, skill){
 	} else if (skill.Target == 'Corpse'){
 		var curTarget = Brain.GetDeadTeamMember();
 		if (curTarget){
+			if (!Brain.IsMyStanceCorrect(Actor, stance)){
+				Characters.ChangeStance(Actor.Index, stance.Index);
+			}
 			UseSkill(Actor.SelfAi, curTarget, skill.Id);
 		}
 		
@@ -193,8 +198,7 @@ Brain.AutoBullets = func(Actor){
 Brain.ReturnToFarm = func(Actor){	
 	if (Settings.Family.Mode == 0)
 	{			
-		sleep(500);
-		while (IsNearFromKeepDestPosition(Actor.SelfAi, 50) != 'YES'){			
+		if (IsNearFromKeepDestPosition(Actor.SelfAi, 100) != 'YES'){			
 			KeepDestMoveTo(Actor.SelfAi);
 			sleep(1000);
 		}

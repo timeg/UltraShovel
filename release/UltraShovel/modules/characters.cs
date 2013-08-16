@@ -16,10 +16,9 @@ Characters.Handle = func(self){
 	var aiIndex = Characters.GetAiIndex(self);
 	if (aiIndex != nil) return;
 	
-	if (Characters.CurrentIndex > 3){
+	if (Characters.AreInitialized){
 		if (Shovel.IsDebug) SysMsg('New chars detected');
 		Characters.CancelAll();
-		return;
 	}
 	
 	var i = GetSelfIndex(GetAiActor(self));
