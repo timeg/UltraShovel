@@ -53,9 +53,9 @@ Alarms.CheckDead = func(){
 }
 
 Alarms.MakeSound = func(param){
+	SysMsg("Alarm!");
 	if (!Shovel.IsTime(Alarms.SoundAlarmTime, 60)) return;
 	Alarms.SoundAlarmTime = Shovel.Now;
-	SysMsg("Alarm!");
 	if (Settings.Family.UseSimpleAlarm)
 	{
 		DisableBGM(0);

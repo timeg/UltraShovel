@@ -34,6 +34,8 @@ if (Shovel){
 	// Get current region
 	Shovel.Region = GetNation();
 	
+	
+	
 	Shovel.Unload = func (){
 		ChangeTactics("TS_NONE");
 		var k, v;
@@ -56,6 +58,15 @@ if (Shovel){
 
 	// Main initialization method
 	Shovel.Initialize = func(){
+	
+		if (Shovel.Region == 'SEA'){
+			Shovel.GetStringData = GetDataTableStringValue;
+			Shovel.GetNumberData = GetDataTableNumberValue;
+		} else {			
+			Shovel.GetStringData = GetDatatableStringValue;
+			Shovel.GetNumberData = GetDatatableNumberValue;
+		}
+		
 		pcall(dofile, Shovel.AiFolder .. Shovel.FSP .. Shovel.ModulesFolder .. Shovel.FSP .. 'system' .. Shovel.Ext );
 		Shovel.LoadAI();
 		Close('tutomessage');
@@ -162,9 +173,8 @@ if (Shovel){
 		
 		// save current char settings each time when user press space
 		Characters.Save(aiIndex);
-		// call IsLeader makes us possible to be sure
 		// {if} block will be called once
-		if (IsLeader(GetAiActor(self)) == 'YES' ){
+		if (GetSelfIndex(Characters[aiIndex].SelfAi) == GetLeaderIndex()){
 			Settings.Save();
 		}
 		

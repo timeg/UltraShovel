@@ -86,14 +86,13 @@ Brain.AutoSkills = func(Actor){
 		var set = Actor.Settings.WeaponSets[i];
 		for (j = 1, table.getn(set.Stances)){
 			var stance = set.Stances[j];
-			for (k = 1, 5){
+			for (k = 1, 5){			
 				var skill = stance.Skills[k];
 				var result = Brain.TryToUseSkill(Actor, stance, skill);
 				if (result) sleep(100);
 			}
 		}
 	}
-	
 	// use job skill
 	var skill = Actor.Settings.JobSkill;
 	var result = Brain.TryToUseSkill(Actor, nil, skill);
@@ -281,11 +280,9 @@ Brain.IsMyStanceCorrect = func(Actor, stance){
 			selectedWeaponIsCorrect = true;
 		}
 	}
-	
 	if (!selectedWeaponIsCorrect){
 		SysMsg(Text['IncorrectWeapon']);
 	}
-	
 	if (stance.Index == Characters.GetSelectedStanceIndex(Actor.Index)){
 		return true;
 	} else {
