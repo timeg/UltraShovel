@@ -228,6 +228,12 @@ InstantHold=0x<codeAddress>
 	84C0               <!-- TEST AL,AL                          -->
 	74 48              <!-- JE SHORT 48                         -->
 </codeAddress>
+KeepAlone=0x<codeValue>
+	74 31              <!-- JE SHORT 31                         -->
+	57                 <!-- PUSH EDI                            -->
+	E8 \r4             <!-- CALL \r4                            -->
+	33FF               <!-- XOR EDI,EDI                         -->
+</codeValue>
 
 GetTarget=0x<codeValue>
 	83F8 05            <!-- CMP EAX,5                           -->
@@ -812,18 +818,18 @@ CNormalNet_Process=0x<codeAddress>
 	74 14              <!-- JE SHORT 14                         -->
 	81FB 050C0000      <!-- CMP EBX,0C05                        -->
 </codeAddress>
-DirectWarp1=0x<codeAddress offset="4">
+ImmediatelyWarp1=0x<codeAddress offset="4">
 	3946 68            <!-- CMP DWORD PTR DS:[ESI+68],EAX       -->
 	5E                 <!-- POP ESI                             -->
 	74 32              <!-- JE 32                               -->
 </codeAddress>
-DirectWarp2=0x<codeAddress offset="3" skipCount="2">
+ImmediatelyWarp2=0x<codeAddress offset="3" skipCount="2">
 	3946 68            <!-- CMP DWORD PTR DS:[ESI+68],EAX       -->
 	0F84 81000000      <!-- JE 81                               -->
 	8365 F0 00         <!-- AND DWORD PTR SS:[EBP-10],0         -->
 	6A 05              <!-- PUSH 5                              -->
 </codeAddress>
-DirectWarp3=0x<codeAddress offset="3">
+ImmediatelyWarp3=0x<codeAddress offset="3">
 	3946 68            <!-- CMP DWORD PTR DS:[ESI+68],EAX       -->
 	0F84 84000000      <!-- JE 84                               -->
 	8365 F0 00         <!-- AND DWORD PTR SS:[EBP-10],0         -->
@@ -872,7 +878,7 @@ Permmission=3 ; Game Master
 
 ModeMgrToWorldPtr=0x28 ; GetEnemy
 WorldPtrToWorld=0x08 ; GetEnemy
-WorldToMapProperty=0x0498 ; DirectWarp
+WorldToMapProperty=0x0498 ; ImmediatelyWarp
 MapPropertyToMapID=0x18 ; Binary
 SessionToWorldIndex=0x077C ; Binary
 SessionToWorldIP=0x07A5 ; Binary
@@ -897,15 +903,64 @@ BaseObjectToIsFriend3=0x0248 ; GetFriend
 BaseObjectToItemFamily=0x0234 ; IsEnablePickItem
 BaseObjectToItemSquadID=0x0238 ; IsEnablePickItem
 
-AiActorToActor=0x00B8 ; GetSelfActor IsSkillUsing
-AiActorToBaseObject=0x0158 ; PickItem
-AiActorToCounterTarget=0x0170 ; GetActorAttackMe
-AiActorToPickItem=0x0190 ; PickItem
-AiActorToMyAtkLayer=0x0358 ; CheckLayer
+AiActorToActor=0x<codeValue>
+	56                 <!-- PUSH ESI                            -->
+	8DB1 \x4           <!-- LEA ESI,DWORD PTR DS:[ECX+\x4]      -->
+	8B0E               <!-- MOV ECX,DWORD PTR DS:[ESI]          -->
+	8B01               <!-- MOV EAX,DWORD PTR DS:[ECX]          -->
+	FF50 54            <!-- CALL DWORD PTR DS:[EAX+54]          -->
+	83F8 0F            <!-- CMP EAX,0F                          -->
+</codeValue> ; GetSelfActor IsSkillUsing
+AiActorToBaseObject=0x<codeValue>
+	8B4424 04          <!-- MOV EAX,DWORD PTR SS:[ESP+4]        -->
+	6A 00              <!-- PUSH 0                              -->
+	6A 00              <!-- PUSH 0                              -->
+	50                 <!-- PUSH EAX                            -->
+	8981 ****0000      <!-- MOV DWORD PTR DS:[ECX+****],EAX     -->
+	8B89 \x4           <!-- MOV ECX,DWORD PTR DS:[ECX+\x4]      -->
+	6A 0D              <!-- PUSH 0D                             -->
+	E8 ********        <!-- CALL ********                       -->
+	C2 0400            <!-- RETN 4                              -->
+</codeValue> ; PickItem
+AiActorToCounterTarget=0x<codeValue>
+	EB 06              <!-- JMP SHORT 06                        -->
+	8B86 \x4           <!-- MOV EAX,DWORD PTR DS:[ESI+\x4]      -->
+	5E                 <!-- POP ESI                             -->
+	C9                 <!-- LEAVE                               -->
+	C2 0400            <!-- RETN 4                              -->
+</codeValue> ; GetActorAttackMe
+AiActorToPickItem=0x<codeValue>
+	8B4424 04          <!-- MOV EAX,DWORD PTR SS:[ESP+4]        -->
+	6A 00              <!-- PUSH 0                              -->
+	6A 00              <!-- PUSH 0                              -->
+	50                 <!-- PUSH EAX                            -->
+	8981 \x4           <!-- MOV DWORD PTR DS:[ECX+\x4],EAX      -->
+	8B89 ****0000      <!-- MOV ECX,DWORD PTR DS:[ECX+****]     -->
+	6A 0D              <!-- PUSH 0D                             -->
+	E8 ********        <!-- CALL ********                       -->
+	C2 0400            <!-- RETN 4                              -->
+</codeValue> ; PickItem
+AiActorToMyAtkLayer=0x<codeValue>
+	8945 08            <!-- MOV DWORD PTR SS:[EBP+8],EAX        -->
+	8B41 10            <!-- MOV EAX,DWORD PTR DS:[ECX+10]       -->
+	DB45 08            <!-- FILD DWORD PTR SS:[EBP+8]           -->
+	8B80 \x4           <!-- MOV EAX,DWORD PTR DS:[EAX+\x4]      -->
+</codeValue> ; CheckLayer
 
 ActorToAiActor=0x
-ActorToBaseObject=0x01C8 ; Binary
-ActorToTargetDefLayer=0x0360 ; CheckLayer
+ActorToBaseObject=0x<codeValue correction="0x04">
+	DB80 ****0000      <!-- FILD DWORD PTR DS:[EAX+****]        -->
+	8B83 ****0000      <!-- MOV EAX,DWORD PTR DS:[EBX+****]     -->
+	8B88 \x4           <!-- MOV ECX,DWORD PTR DS:[EAX+\x4]      -->
+	8B01               <!-- MOV EAX,DWORD PTR DS:[ECX]          -->
+</codeValue>
+ActorToTargetDefLayer=0x<codeValue>
+	8B45 08            <!-- MOV EAX,DWORD PTR SS:[EBP+8]        -->
+	8B90 \x4           <!-- MOV EDX,DWORD PTR DS:[EAX+\x4]      -->
+	0390 ****0000      <!-- ADD EDX,DWORD PTR DS:[EAX+****]     -->
+	33C0               <!-- XOR EAX,EAX                         -->
+	83FA 01            <!-- CMP EDX,1                           -->
+</codeValue> ; CheckLayer
 </format>
 
 </MiFormatter>

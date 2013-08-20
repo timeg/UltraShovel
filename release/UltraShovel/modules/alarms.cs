@@ -44,7 +44,7 @@ Alarms.CheckInventory = func(){
 Alarms.CheckDead = func(){
 	for(i = 1, Characters.Count()){
 		if(Characters[i].Settings.DeadAlarm){
-			if (Characters[i].HP == 0){
+			if (Characters[i].HP == "0"){
 				Alarms.MakeSound(Settings.Family.DeadAlarmSound);
 				return;
 			}
