@@ -90,13 +90,19 @@ Brain.AutoSkills = func(Actor){
 				var skill = stance.Skills[k];
 				var result = Brain.TryToUseSkill(Actor, stance, skill);
 				if (result) sleep(100);
+				result = nil;
+				skill = nil;
 			}
+			stance = nil;
 		}
+		set = nil;
 	}
 	// use job skill
 	var skill = Actor.Settings.JobSkill;
 	var result = Brain.TryToUseSkill(Actor, nil, skill);
 	if (result) sleep(100);
+	skill = nil;
+	result = nil;
 }
 
 // Character trying to use skill
@@ -129,7 +135,7 @@ Brain.TryToUseSkill = func(Actor, stance, skill){
 			}
 		}
 		
-		if (UseSkillNone) UseSkillNone(Actor.SelfAi, skill.Id);
+		UseSkillNone(Actor.SelfAi, skill.Id);
 		
 	} else if (skill.Target == 'Party'){
 		if (Settings.Family.CallAtPartyBuff){
@@ -165,7 +171,7 @@ Brain.TryToUseSkill = func(Actor, stance, skill){
 	}
 	
 	skill.UsageTime = Shovel.Now; 
-	while(IsSkillUsing(Actor.SelfAi) == 'YES') { sleep(200); }
+	//while(IsSkillUsing(Actor.SelfAi) == 'YES') { sleep(200); }
 	return true;
 }
 

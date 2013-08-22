@@ -52,6 +52,7 @@ Settings.Load = func(){
 		Settings.Family = settings;
 		if (Shovel.IsDebug) SysMsg('Settings loaded for family ' .. Shovel.Commander);
 	}
+	tmp = nil;
 }
 
 Settings.ChangeLanguage = func(){

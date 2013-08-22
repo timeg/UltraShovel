@@ -74,7 +74,7 @@ System.SerializeTable = func(val, name, skipnewlines, depth){
 		depth = 0;
 	}
 	
-    tmp = string.rep("  ", depth)
+    var tmp = string.rep("  ", depth)
 
     if (name != nil){
 		if (type(name)=="number"){
@@ -111,7 +111,7 @@ System.SerializeTable = func(val, name, skipnewlines, depth){
 
 // Method dumps table with name [value] to file with name [filename]
 System.SaveTableToFile = func(value, filename){
-	tmp = System.SerializeTable(value, 'TempStorage');
+	var tmp = System.SerializeTable(value, 'TempStorage');
 	var file = io.open(filename, 'w');
 	if (file) 
 	{

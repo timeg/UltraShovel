@@ -3,7 +3,7 @@ if (Shovel){
 		if (!status) SysMsg(rez);
 } else {
 	Shovel = {
-		AIVersion = 		"Release 2.13", 
+		AIVersion = 		"Release 2.14", 
 		Name = 				"UltraShovel",
 		Commander = 		GetMyCommanderName(), 
 		Region = 			GetNation(), 
@@ -24,7 +24,8 @@ if (Shovel){
 		Now =				0,
 		_G_ = { SysMsg = SysMsg , GetNation = GetNation, sleep = sleep},
 		IsDebug = false,
-		Farm = false
+		Farm = false,
+		Timer = 0
 	}	
 	
 	// Replaced SysMsg function
@@ -52,7 +53,7 @@ if (Shovel){
 		Interface.ShowMini(Text['GoodByeMessage']);		
 		Interface.CloseAll();
 		System.UnloadModules();
-		
+		TempStorage = nil;
 		Shovel = nil;
 	}
 
@@ -107,18 +108,23 @@ if (Shovel){
 	// Replaced sleep method
 	sleep = func (ms) {
 		// call updates for modules if needed
-		// each sleep [very often]
-		Interface.Update();
-		Alarms.Update();
+		// each sleep [very often]		
 		Brain.AutoPotions();
+		if (sGeWithTheShovel) sGeWithTheShovel.Monitoring();	
+			
 		Shovel.Passed = Shovel.Passed + tonumber(ms);
-		// call updates each 1 sec
 		if (Shovel.Passed >= 1000) {
 			Shovel.Now = os.difftime(os.time(), Shovel.GameStartTime);
-			Shovel.Passed = 0;
-			if (sGeWithTheShovel) sGeWithTheShovel.Monitoring();
+			Shovel.Passed = 0;		
+		}
+		
+		// call updates each 1 sec
+		if (Shovel.IsTime(Shovel.Timer, 1)) {
 			Addons.Update();
 			Brain.AutoItems();
+			Interface.Update();
+			Alarms.Update();
+			Shovel.Timer = Shovel.Now;
 		}
 		// call base method
 	    Shovel._G_.sleep(tonumber(ms));
@@ -161,7 +167,7 @@ if (Shovel){
 			Brain.UserTarget(Characters[aiIndex]);
 		}		
 	}
-
+	
 	// Main SCR_TS_KEEP function replaced by UltraShovel
 	Shovel.SCR_TS_KEEP = func (self){ 
 		Shovel.Prepare(self, "Keep");
@@ -176,11 +182,10 @@ if (Shovel){
 		// {if} block will be called once
 		if (GetSelfIndex(Characters[aiIndex].SelfAi) == GetLeaderIndex()){
 			Settings.Save();
-		}
+		}		
 		
 		while(true){	
 			sleep(100);
-			
 			Brain.AutoAttack(Characters[aiIndex]);
 			Brain.AutoPick(Characters[aiIndex]);	
 			Brain.AutoBullets(Characters[aiIndex]);
@@ -189,7 +194,7 @@ if (Shovel){
 			Brain.KeepPosition();
 		}		
 	}
-				
+	
 	// Call this method at start of each SCR_TS
 	// it helps to handle existing/new chars
 	Shovel.Prepare = func(self, stance) {
@@ -217,5 +222,6 @@ if (Shovel){
 	Shovel.SCR_PUPPET_TS_KEEP = Shovel.SCR_TS_KEEP;
 	 
 	Shovel.Initialize();
+	
 	
 }

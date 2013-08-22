@@ -67,7 +67,6 @@ Addons.Stop = func(){
 Addons.Update = func(){
     if (!Shovel.IsTime(Addons.Timer, 1)) return;
 	Addons.Timer = Shovel.Now;
-		
 	for (key, value in Addons.Current){
 		if (value.IsEnabled == true){
 			value.MainBody();
