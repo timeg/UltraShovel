@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="shift_jis" ?>
+<?xml version="1.0" encoding="Shift_JIS" ?>
 
 <MiFormatter>
 
-<format input="ge.exe" output="UltraShovel.ini" baseAddress="0x00400000" xml:space="preserve">
+<format input="ge.exe" output="GeAddress.ini" baseAddress="0x00400000" xml:space="preserve">
 [Address]
 Session=0x<codeValue>
 	83C6 0A        <!-- ADD ESI,0A                              -->
@@ -60,15 +60,10 @@ Session_GetIndexedStance=0x<codeValue>
 </codeValue>
 Session_GetActiveStance=0x<codeValue>
 	E8 \r4         <!-- |CALL \r4                               -->
-	8B4D 14        <!-- |MOV ECX,DWORD PTR SS:[EBP+14]          -->
-	8904B1         <!-- |MOV DWORD PTR DS:[ECX+ESI*4],EAX       -->
-	46             <!-- |INC ESI                                -->
-	83FE 03        <!-- |CMP ESI,3                              -->
-</codeValue>
-;Session_GetActiveStance=0x<codeValue>
-	E8 \r4         <!-- |CALL \r4                               -->
-	8944B5 EC      <!-- |MOV DWORD PTR SS:[EBP+ESI*4-14],EAX    -->
-	46             <!-- |INC ESI                                -->
+	FF45 08        <!-- |INC DWORD PTR SS:[EBP+8]               -->
+	8907           <!-- |MOV DWORD PTR DS:[EDI],EAX             -->
+	83C6 04        <!-- |ADD ESI,4                              -->
+	83C7 04        <!-- |ADD EDI,4                              -->
 </codeValue>
 Session_GetMyPcIndex=0x<codeValue>
 	8BC8           <!-- MOV ECX,EAX                             -->
@@ -95,9 +90,8 @@ Session_GetSquadID=0x<codeValue>
 ;Session_GetSquadID=0x<codeValue>
 	E8 \r4         <!-- CALL \r4                                -->
 	85C0           <!-- TEST EAX,EAX                            -->
-	74 32          <!-- JE SHORT 32                             -->
-	68 ********    <!-- PUSH ********                           -->
-	BE 00020000    <!-- MOV ESI,200                             -->
+	74 2B          <!-- JE SHORT 2B                             -->
+	8D85 FCFCFFFF  <!-- LEA EAX,DWORD PTR SS:[EBP-304]          -->
 </codeValue>
 ;Session_GetSquadID=0x<codeValue>
 	E8 ********    <!-- CALL ********                           -->
@@ -108,18 +102,6 @@ Session_GetSquadID=0x<codeValue>
 	50             <!-- PUSH EAX                                -->
 	FF36           <!-- PUSH DWORD PTR DS:[ESI]                 -->
 </codeValue>
-GetMyCommanderName=0x<codeAddress>
-	E8 ********    <!-- CALL ********                           -->
-	8BC8           <!-- MOV ECX,EAX                             -->
-	E8 ********    <!-- CALL ********                           -->
-	40             <!-- INC EAX                                 -->
-	40             <!-- INC EAX                                 -->
-	C3             <!-- RETN                                    -->
-</codeAddress>
-</format>
-
-<format input="ge.exe" output="UltraShovelEx.ini" baseAddress="0x00400000" xml:space="preserve">
-[Address]
 
 CStringID_Constructor=0x<codeAddress>
 	56                 <!-- PUSH ESI                            -->
@@ -148,7 +130,7 @@ CAiActor_Destructor=0x<codeAddress>
 GetMainThread=0x<codeValue>
 	E8 \r4             <!-- |CALL \r4                           -->
 	8B10               <!-- |MOV EDX,DWORD PTR DS:[EAX]         -->
-	83C6 05            <!-- |ADD ESI,5                          -->
+	83C6 14            <!-- |ADD ESI,14                         -->
 </codeValue>
 LoadScriptString=0x<codeValue>
 	8B03               <!-- MOV EAX,DWORD PTR DS:[EBX]          -->
@@ -219,18 +201,18 @@ Hold=0x<codeAddress>
 	C2 0400            <!-- RETN 4                              -->
 </codeAddress>
 InstantHold=0x<codeAddress>
-	55                 <!-- PUSH EBP                            -->
-	8BEC               <!-- MOV EBP,ESP                         -->
-	83EC 0C            <!-- SUB ESP,0C                          -->
-	56                 <!-- PUSH ESI                            -->
-	8BF1               <!-- MOV ESI,ECX                         -->
-	E8 ********        <!-- CALL ********                       -->
-	84C0               <!-- TEST AL,AL                          -->
-	74 48              <!-- JE SHORT 48                         -->
+	55                 <!-- PUSH EBP -->
+	8BEC               <!-- MOV EBP,ESP -->
+	83EC 0C            <!-- SUB ESP,0C -->
+	56                 <!-- PUSH ESI -->
+	8BF1               <!-- MOV ESI,ECX -->
+	E8 ********        <!-- CALL ******** -->
+	85C0               <!-- TEST EAX,EAX -->
 </codeAddress>
 KeepAlone=0x<codeValue>
-	74 31              <!-- JE SHORT 31                         -->
+	74 33              <!-- JE SHORT 33                         -->
 	57                 <!-- PUSH EDI                            -->
+	8BCE               <!-- MOV ECX,ESI                         -->
 	E8 \r4             <!-- CALL \r4                            -->
 	33FF               <!-- XOR EDI,EDI                         -->
 </codeValue>
@@ -263,7 +245,7 @@ SetAiTarget=0x<codeValue>
 </codeValue>
 GetUserTarget=0x<codeValue>
 	83F8 03            <!-- CMP EAX,3                           -->
-	74 54              <!-- JE 54                               -->
+	74 **              <!-- JE SHORT 54                         -->
 	8BCB               <!-- MOV ECX,EBX                         -->
 	E8 \r4             <!-- CALL \r4                            -->
 </codeValue>
@@ -421,13 +403,13 @@ KeepDestMoveTo=0x<codeValue>
 </codeValue>
 AssaultDestMoveTo=0x<codeValue>
 	6A 09              <!-- PUSH 9                              -->
-	EB 72              <!-- JMP 72                              -->
+	EB **              <!-- JMP SHORT **                        -->
 	8BCE               <!-- MOV ECX,ESI                         -->
 	E8 \r4             <!-- CALL \r4                            -->
 </codeValue>
 HarvestDestMoveTo=0x<codeValue>
 	6A 0D              <!-- PUSH 0D                             -->
-	EB 2B              <!-- JMP 2B                              -->
+	EB 2B              <!-- JMP SHORT 2B                        -->
 	E8 \r4             <!-- CALL \r4                            -->
 </codeValue>
 
@@ -492,9 +474,10 @@ IsLeader=0x<codeAddress>
 	74 07              <!-- JE SHORT 07                         -->
 	3BC1               <!-- CMP EAX,ECX                         -->
 	74 03              <!-- JE SHORT 03                         -->
-	32C0               <!-- XOR AL,AL                           -->
+	33C0               <!-- XOR EAX,EAX                         -->
 	C3                 <!-- RETN                                -->
-	B0 01              <!-- MOV AL,1                            -->
+	33C0               <!-- XOR EAX,EAX                         -->
+	40                 <!-- INC EAX                             -->
 	C3                 <!-- RETN                                -->
 </codeAddress>
 IsSkillUsing=0x<codeAddress>
@@ -516,7 +499,6 @@ IsSkillUsing=0x<codeAddress>
 	C3                 <!-- RETN                                -->
 </codeAddress>
 ;IsSkillUsing=0x<codeValue>
-	8BCB               <!-- MOV ECX,EBX                         -->
 	E8 \r4             <!-- CALL \r4                            -->
 	84C0               <!-- TEST AL,AL                          -->
 	74 **              <!-- JE **                               -->
@@ -529,11 +511,12 @@ IsAbleToAttack=0x<codeAddress>
 	8B81 ****0000      <!-- MOV EAX,DWORD PTR DS:[ECX+****]     -->
 </codeAddress>
 ;IsAbleToAttack=0x<codeValue>
+	57                 <!-- PUSH EDI                            -->
 	8BCE               <!-- MOV ECX,ESI                         -->
 	E8 ********        <!-- CALL ********                       -->
 	8BCE               <!-- MOV ECX,ESI                         -->
 	E8 \r4             <!-- CALL \r4                            -->
-	84C0               <!-- TEST AL,AL                          -->
+	85C0               <!-- TEST EAX,EAX                        -->
 	74 08              <!-- JE 08                               -->
 </codeValue>
 IsTargetInMyAttackRange=0x<codeAddress>
@@ -766,23 +749,29 @@ FSM_=0x<codeValue>
 	C3                 <!-- RETN                                -->
 </codeValue>
 
-GetJobTable=0x<codeValue>
-	0FB640 **          <!-- MOVZX EAX,BYTE PTR DS:[EAX+**]      -->
-	50                 <!-- PUSH EAX                            -->
-	E8 \r4             <!-- CALL \r4                            -->
-	59                 <!-- POP ECX                             -->
-	8BC8               <!-- MOV ECX,EAX                         -->
-	83C1 10            <!-- ADD ECX,10                          -->
-</codeValue>
-GetStanceProperty=0x<codeValue>
-	53                 <!-- PUSH EBX                            -->
-	E8 \r4             <!-- CALL \r4                            -->
-	59                 <!-- POP ECX                             -->
-	8BC8               <!-- MOV ECX,EAX                         -->
-	E8 ********        <!-- CALL ********                       -->
-	50                 <!-- PUSH EAX                            -->
+ui_CObject_ShowWindow=0x<codeAddress>
+	53                 <!-- PUSH EBX                                -->
+	8B5C24 08          <!-- MOV EBX,DWORD PTR SS:[ESP+8]            -->
+	55                 <!-- PUSH EBP                                -->
+	56                 <!-- PUSH ESI                                -->
+	57                 <!-- PUSH EDI                                -->
+	8BF1               <!-- MOV ESI,ECX                             -->
+	83FB 01            <!-- CMP EBX,1                               -->
+</codeAddress>
+ui_CObject_GetName=0x<codeValue>
+	8B4D EC            <!-- |MOV ECX,DWORD PTR SS:[EBP-14]          -->
+	E8 \r4             <!-- |CALL \r4                               -->
+	50                 <!-- |PUSH EAX                               -->
+	8D4D D4            <!-- |LEA ECX,DWORD PTR SS:[EBP-2C]          -->
 </codeValue>
 CheckLayer=0x<codeValue>
+	57                 <!-- PUSH EDI                                -->
+	8BF1               <!-- MOV ESI,ECX                             -->
+	E8 \r4             <!-- CALL \r4                                -->
+	84C0               <!-- TEST AL,AL                              -->
+	74 48              <!-- JE SHORT 48                             -->
+</codeValue>
+;CheckLayer=0x<codeValue>
 	56                 <!-- PUSH ESI                            -->
 	57                 <!-- PUSH EDI                            -->
 	FF7424 0C          <!-- PUSH DWORD PTR SS:[ESP+C]           -->
@@ -792,6 +781,14 @@ CheckLayer=0x<codeValue>
 	74 64              <!-- JE SHORT 64                         -->
 	FF76 05            <!-- PUSH DWORD PTR DS:[ESI+5]           -->
 </codeValue>
+GetMyCommanderName=0x<codeAddress>
+	E8 ********        <!-- CALL ********                       -->
+	8BC8               <!-- MOV ECX,EAX                         -->
+	E8 ********        <!-- CALL ********                       -->
+	40                 <!-- INC EAX                             -->
+	40                 <!-- INC EAX                             -->
+	C3                 <!-- RETN                                -->
+</codeAddress>
 GetContextCommander=0x<codeAddress>
 	56                 <!-- PUSH ESI                            -->
 	E8 ********        <!-- CALL ********                       -->
@@ -801,7 +798,7 @@ GetContextCommander=0x<codeAddress>
 AiRange=0x<codeAddress offset="0x0D">
 	D91D ********      <!-- FSTP DWORD PTR DS:[********]        -->
 	E8 ********        <!-- CALL ********                       -->
-	84C0               <!-- TEST AL,AL                          -->
+	85C0               <!-- TEST EAX,EAX                        -->
 	0F85 ********      <!-- JNZ ********                        -->
 </codeAddress>
 CNormalNet_Process=0x<codeAddress>
@@ -818,22 +815,66 @@ CNormalNet_Process=0x<codeAddress>
 	74 14              <!-- JE SHORT 14                         -->
 	81FB 050C0000      <!-- CMP EBX,0C05                        -->
 </codeAddress>
-ImmediatelyWarp1=0x<codeAddress offset="4">
+CNormalNet_Chat=0x<codeAddress>
+	55                 <!-- PUSH EBP                            -->
+	8DAC24 78FFFFFF    <!-- LEA EBP,DWORD PTR SS:[ESP-88]       -->
+	81EC 08010000      <!-- SUB ESP,108                         -->
+</codeAddress>
+CNormalNet_Whisper=0x<codeAddress>
+	55                 <!-- PUSH EBP                            -->
+	8BEC               <!-- MOV EBP,ESP                         -->
+	81EC 04080000      <!-- SUB ESP,804                         -->
+	A1 ********        <!-- MOV EAX,DWORD PTR DS:[********]     -->
+	33C5               <!-- XOR EAX,EBP                         -->
+	8945 FC            <!-- MOV DWORD PTR SS:[EBP-4],EAX        -->
+	56                 <!-- PUSH ESI                            -->
+</codeAddress>
+CNormalNet_Text=0x<codeAddress>
+	55                 <!-- PUSH EBP                            -->
+	81EC 98000000      <!-- SUB ESP,98                          -->
+	8D6C24 FC          <!-- LEA EBP,DWORD PTR SS:[ESP-4]        -->
+	A1 ********        <!-- MOV EAX,DWORD PTR DS:[********]     -->
+	33C5               <!-- XOR EAX,EBP                         -->
+	8985 98000000      <!-- MOV DWORD PTR SS:[EBP+98],EAX       -->
+	6A 28              <!-- PUSH 28                             -->
+</codeAddress>
+CNormalNet_PartyMemberMoveZone=0x<codeAddress>
+	55                 <!-- PUSH EBP                            -->
+	8DAC24 74FFFFFF    <!-- LEA EBP,DWORD PTR SS:[ESP-8C]       -->
+	81EC 0C010000      <!-- SUB ESP,10C                         -->
+	A1 ********        <!-- MOV EAX,DWORD PTR DS:[********]     -->
+	33C5               <!-- XOR EAX,EBP                         -->
+	8985 88000000      <!-- MOV DWORD PTR SS:[EBP+88],EAX       -->
+	56                 <!-- PUSH ESI                            -->
+</codeAddress>
+CNormalNet_MoveZoneOk=0x<codeAddress>
+	55                 <!-- PUSH EBP                            -->
+	81EC 84020000      <!-- SUB ESP,284                         -->
+	8D6C24 FC          <!-- LEA EBP,DWORD PTR SS:[ESP-4]        -->
+	A1 ********        <!-- MOV EAX,DWORD PTR DS:[********]     -->
+	33C5               <!-- XOR EAX,EBP                         -->
+</codeAddress>
+Immediate1=0x<codeAddress offset="4">
 	3946 68            <!-- CMP DWORD PTR DS:[ESI+68],EAX       -->
 	5E                 <!-- POP ESI                             -->
-	74 32              <!-- JE 32                               -->
+	74 33              <!-- JE 33                               -->
 </codeAddress>
-ImmediatelyWarp2=0x<codeAddress offset="3" skipCount="2">
+Immediate2=0x<codeAddress offset="3">
+	3946 68            <!-- CMP DWORD PTR DS:[ESI+68],EAX       -->
+	74 7E              <!-- JE 7E                               -->
+	8365 F0 00         <!-- AND DWORD PTR SS:[EBP-10],0         -->
+	6A 05              <!-- PUSH 5                              -->
+</codeAddress>
+Immediate3=0x<codeAddress offset="3">
 	3946 68            <!-- CMP DWORD PTR DS:[ESI+68],EAX       -->
 	0F84 81000000      <!-- JE 81                               -->
 	8365 F0 00         <!-- AND DWORD PTR SS:[EBP-10],0         -->
 	6A 05              <!-- PUSH 5                              -->
 </codeAddress>
-ImmediatelyWarp3=0x<codeAddress offset="3">
+Immediate4=0x<codeAddress offset="3">
 	3946 68            <!-- CMP DWORD PTR DS:[ESI+68],EAX       -->
-	0F84 84000000      <!-- JE 84                               -->
-	8365 F0 00         <!-- AND DWORD PTR SS:[EBP-10],0         -->
-	6A 05              <!-- PUSH 5                              -->
+	75 12              <!-- JNZ SHORT 12                        -->
+	FFB5 0C040000      <!-- PUSH DWORD PTR SS:[EBP+40C]         -->
 </codeAddress>
 Bug1=0x<codeValue>
 	6A 7C              <!-- PUSH 7C                             -->
@@ -878,11 +919,14 @@ Permmission=3 ; Game Master
 
 ModeMgrToWorldPtr=0x28 ; GetEnemy
 WorldPtrToWorld=0x08 ; GetEnemy
-WorldToMapProperty=0x0498 ; ImmediatelyWarp
+WorldToMapProperty=0x0498 ; Immediate
 MapPropertyToMapID=0x18 ; Binary
 SessionToWorldIndex=0x077C ; Binary
 SessionToWorldIP=0x07A5 ; Binary
 WorldToIndexedObjectCount=0x374 ; 0x0354 + 0x20 ; GetEnemy
+
+GetIndexedActorInGetEnemy=0x0073
+GetIndexedTypeObjectInGetNearItem=0x0074
 
 BaseObjectToActor=0x0010 ; GetEnemy GetIndexedActor
 BaseObjectToAiActor=0x000C ; GetFriend
@@ -900,8 +944,10 @@ BaseObjectToIsPet=0x0030 ; Binary
 BaseObjectToIsFriend1=0x0030 ; GetFriend
 BaseObjectToIsFriend2=0x000C ; GetFriend
 BaseObjectToIsFriend3=0x0248 ; GetFriend
+BaseObjectToItemID=0x0008 ; GetNearItem
 BaseObjectToItemFamily=0x0234 ; IsEnablePickItem
 BaseObjectToItemSquadID=0x0238 ; IsEnablePickItem
+BaseObjectToItemReinforce=0x011C ; Binary
 
 AiActorToActor=0x<codeValue>
 	56                 <!-- PUSH ESI                            -->

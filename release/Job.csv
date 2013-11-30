@@ -1,4 +1,9 @@
 ClassID	ClassName	Name	JobSkill
+1	Fighter	ファイター	1001
+2	Wizard	ウィザード	1002
+3	Scout	スカウト	1003
+4	Musketeer	マスケッティア	1004
+5	Warlock	ウォーロック	1005
 6	Grace	グレイス	1052
 8	Claude	クラウドボネ	2001
 10	Soldier	リボルドウェソルジャー	1024
@@ -11,7 +16,7 @@ ClassID	ClassName	Name	JobSkill
 17	Panfilo	パンファルロ	2009
 18	Jose	ホセ	2007
 20	MBoma	ウンボマ	2005
-21	Soho	ソホ	1003
+21	Soho	ソホ	1065
 22	Alejandro	アレハンドロ	1025
 23	Lisa	リサ	1026
 24	Emilia	エミリア	1003
@@ -75,6 +80,7 @@ ClassID	ClassName	Name	JobSkill
 95	Olivia	オリヴィア	1060
 103	Veil	ヴェイル	1062
 109	Grace2	グレイス	30211
+112	MontoroPC	モントロ	2015
 180	FighterGame	ファイター	0
 181	MusketeerGame	マスケッティア	0
 182	CatherineSTRGame	カトリーヌ(筋力)	0
@@ -86,6 +92,7 @@ ClassID	ClassName	Name	JobSkill
 188	CustomVeil	ヴェイル	25011
 189	CustomEduardo	エデュアルド	25018
 190	CustomFighter	ファイター	0
+191	CustomGrace	グレイス	25025
 200	Neolith	リンドン	0
 201	GameQueen	運営者	0
 202	AlejandroGM	テストサーバ運営者	0
@@ -93,7 +100,7 @@ ClassID	ClassName	Name	JobSkill
 204	Fritz	プリッツ	0
 205	DoctorTorse	トルシェー博士	0
 206	Novia	ノヴィア	0
-207	Montoro	モントロ	0
+207	Montoro	悪人モントロ	0
 208	SierraLos	シエラ・ローズ	0
 209	LeonoraLos	レオノラ・ローズ	0
 210	SimonAllende	シモン アイェンデ	0
@@ -102,19 +109,13 @@ ClassID	ClassName	Name	JobSkill
 213	GameQueen2	新運営者	0
 250	HMonster	運営者mon	0
 251	HNPC	編入npc	0
-110	Rachel	レイチェルシェフィールド	1064
-1	Fighter	ファイター	1001
-2	Wizard	ウィザード	1002
-3	Scout	スカウト	1003
-4	Musketeer	マスケッティア	1004
-5	Warlock	ウォーロック	1005
 7	Idge	イッジ	2002
 9	Brunie	ブルーニ	1027
 19	Adelina	アデリーナ	2004
 29	Karjalainen	カルヤライネン	2010
 38	PanfiloBattle	パンファルロ(戦闘型)	1038
 39	AdelinaPirate	アデリーナ(海賊型)	1031
-40	SohoFighter	ソホ(格闘型)	1003
+40	SohoFighter	ソホ(格闘型)	1065
 41	EmiliaSage	エミリア(魔法型)	1003
 42	IdgeBattle	イッジ(戦闘型)	1037
 43	Selva	セルバ	1016
@@ -129,8 +130,12 @@ ClassID	ClassName	Name	JobSkill
 98	GraceSniper	スナイパーグレイス 	1004
 99	Liung	ロン	1056
 100	Vendetta	ヴァレリア・ヴェンデッタ	1058
+101	Viking	ロト	1059
 102	SpyOlivia	スパイオリヴィア	1061
+104	Selane	セレーネ	11771
 105	Spirit	ローズスピリット	1063
+110	Rachel	レイチェルシェフィールド	1064
 111	Rosa	ロサ	2014
+113	ClaudeY	傭兵クラウドボネ	2016
 164	Ruosiba	大柴DEヴェンデッタ	1020
 165	Mifuyu_Event	ミフユ	30113
