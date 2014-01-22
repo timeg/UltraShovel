@@ -29,7 +29,7 @@ Settings = {
 		ReturnTime = 10,
 		CallTime = 5,
 		Mode = 0,
-		Language = "rus"
+		Language = "eng"
 	}
 }
 

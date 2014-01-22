@@ -3,7 +3,7 @@ if (Shovel){
 		if (!status) SysMsg(rez);
 } else {
 	Shovel = {
-		AIVersion = 		"Release 2.14", 
+		AIVersion = 		"Release 2.15", 
 		Name = 				"UltraShovel",
 		Commander = 		GetMyCommanderName(), 
 		Region = 			GetNation(), 
@@ -36,6 +36,15 @@ if (Shovel){
 	Shovel.Region = GetNation();
 	
 	
+		if (Shovel.Region == 'SEA' || Shovel.Region == 'DEU'){
+			SysMsg('Initialized with ' .. 'GetDataTable');
+			Shovel.GetStringData = GetDataTableStringValue;
+			Shovel.GetNumberData = GetDataTableNumberValue;
+		} else {			
+			SysMsg('Initialized with ' .. 'GetDatatable');
+			Shovel.GetStringData = GetDatatableStringValue;
+			Shovel.GetNumberData = GetDatatableNumberValue;
+		}
 	
 	Shovel.Unload = func (){
 		ChangeTactics("TS_NONE");
@@ -60,13 +69,6 @@ if (Shovel){
 	// Main initialization method
 	Shovel.Initialize = func(){
 	
-		if (Shovel.Region == 'SEA'){
-			Shovel.GetStringData = GetDataTableStringValue;
-			Shovel.GetNumberData = GetDataTableNumberValue;
-		} else {			
-			Shovel.GetStringData = GetDatatableStringValue;
-			Shovel.GetNumberData = GetDatatableNumberValue;
-		}
 		
 		pcall(dofile, Shovel.AiFolder .. Shovel.FSP .. Shovel.ModulesFolder .. Shovel.FSP .. 'system' .. Shovel.Ext );
 		Shovel.LoadAI();

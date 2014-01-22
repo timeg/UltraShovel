@@ -755,14 +755,11 @@ FSM_=0x<codeValue>
 </codeValue>
 
 ui_CObject_ShowWindow=0x<codeAddress>
-	51                 <!-- PUSH ECX                            -->
-	53                 <!-- PUSH EBX                            -->
-	8B5C24 0C          <!-- MOV EBX,DWORD PTR SS:[ESP+C]        -->
 	55                 <!-- PUSH EBP                            -->
-	56                 <!-- PUSH ESI                            -->
-	57                 <!-- PUSH EDI                            -->
-	8BF1               <!-- MOV ESI,ECX                         -->
-	80FB 01            <!-- CMP BL,1                            -->
+	8BEC               <!-- MOV EBP,ESP                         -->
+	51                 <!-- PUSH ECX                            -->
+	51                 <!-- PUSH ECX                            -->
+	807D 08 01         <!-- CMP BYTE PTR SS:[EBP+8],1           -->
 </codeAddress>
 ui_CObject_GetName=0x<codeValue>
 	8B4D EC            <!-- |MOV ECX,DWORD PTR SS:[EBP-14]          -->
@@ -855,7 +852,7 @@ CNormalNet_PartyMemberMoveZone=0x<codeAddress>
 </codeAddress>
 CNormalNet_MoveZoneOk=0x<codeAddress>
 	55                 <!-- PUSH EBP                            -->
-	81EC 84020000      <!-- SUB ESP,284                         -->
+	81EC 88020000      <!-- SUB ESP,288                         -->
 	8D6C24 FC          <!-- LEA EBP,DWORD PTR SS:[ESP-4]        -->
 	A1 ********        <!-- MOV EAX,DWORD PTR DS:[********]     -->
 	33C5               <!-- XOR EAX,EBP                         -->
@@ -925,7 +922,7 @@ Permmission=3 ; Game Master
 
 ModeMgrToWorldPtr=0x28 ; GetEnemy
 WorldPtrToWorld=0x08 ; GetEnemy
-WorldToMapProperty=0x0498 ; Immediate
+WorldToMapProperty=0x0498 ; ImmediatelyImmediate
 MapPropertyToMapID=0x18 ; Binary
 SessionToWorldIndex=0x077C ; Binary
 SessionToWorldIP=0x07A5 ; Binary
