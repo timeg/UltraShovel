@@ -1,0 +1,877 @@
+// 아래 변수는 game.scp와 base.scp 양쪽에 다 선언되어 있음. 수정할때 같이 바꾸길..
+var uiCommandUiList = {"cashshopsub","communitymenu","listsub","questinfo2","mapsub","battlesub","inventorysub","commandmenu","squadmenu","warplist","helpsub","postoffice","postofficesend","friendchecklist"};
+var uiCommandSubmenuUiList = {"cashshopsub","communitymenu","listsub","mapsub","battlesub","inventorysub","commandmenu"};
+
+func PVP_UI_MSG()
+{
+	PVPNormalUIMsg();
+}
+
+//UI common
+func UI_OPEN_INDEXED(frame, control, arg1, arg2)
+{
+	var uiFrame = GetFrame(frame);
+	var uiName 	= GetString(arg1);
+	var uiIndex = GetUiIndex(uiFrame);
+	OpenIndexed(uiName, uiIndex);
+}
+
+func UI_CLOSE_INDEXED(frame, control, arg1, arg2)
+{
+	var uiFrame = GetFrame(frame);
+	var uiName 	= GetString(arg1);
+	var uiIndex = GetUiIndex(uiFrame);
+	CloseIndexed(uiName, uiIndex);
+}
+
+func UI_TOGGLE_INDEXED(frame, control, arg1, arg2)
+{
+	var uiFrame = GetFrame(frame);
+	var uiName 	= GetString(arg1);
+	var uiIndex = GetUiIndex(uiFrame);
+	ToggleIndexed(uiName, uiIndex);
+}
+func UI_SET_AI(frame, control, arg1, arg2)
+{
+	var uiFrame = GetFrame(frame);
+	var uiIndex = GetUiIndex(uiFrame);
+	var key 	= GetString(arg1);
+	var value	= arg2;
+	SetAiOptionNumber(uiIndex, key, value);
+}
+
+func UI_SET_TS(frame, control, arg1, arg2)
+{
+	var uiFrame 	= GetFrame(frame);
+	var uiIndex 	= GetUiIndex(uiFrame);
+	var tsName 		= GetString(arg1);
+	ChangeTactics(uiIndex, tsName);	
+}
+
+//jukebox
+func UI_PLAY_BGM(frame, control, arg1, arg2)
+{
+	var uiFrame = GetFrame(frame);
+	var bgmName = GetText(uiFrame, 'select song');
+	PlayMusic(bgmName, 1, 0);
+	UpdateUi(uiFrame);
+}
+
+func UI_PLAY_NEXT(frame, control, arg1, arg2)
+{
+	var uiFrame = GetFrame(frame);
+	var uiList 	= GetControl(uiFrame, 'select song');
+	AdvanceList();
+	
+	UI_PLAY_BGM(frame, control, arg1, arg2);
+}
+
+func UI_PLAY_PREV(frame, control, arg1, arg2)
+{
+	var uiFrame = GetFrame(frame);
+	var uiList 	= GetControl(uiFrame, 'select song');
+	RewindList();
+	
+	UI_PLAY_BGM(frame, control, arg1, arg2);
+}
+func UI_COMMAND_MENU(frame, control, arg1, arg2)
+{
+  var uiName = GetString(arg1);
+  var i = {};
+    
+  for ( i = 1, table.getn(uiCommandUiList)){
+    
+    if ( uiName != uiCommandUiList[i]){
+        Close(uiCommandUiList[i]);
+     }    
+  }
+  
+  if ( uiName == "postoffice"){
+    OpenPostOfficeUI();
+  }  
+  else {
+    Toggle(uiName);
+  }
+}
+
+func UI_COMMAND_MENU_OPEN(frame, control, arg1, arg2)
+{
+  var uiName = GetString(arg1);
+  var i = {};
+    
+  for ( i = 1, table.getn(uiCommandUiList)){
+    
+    if ( uiName != uiCommandUiList[i]){
+        Close(uiCommandUiList[i]);
+     }    
+  }
+  
+  if ( uiName == "postoffice"){
+    OpenPostOfficeUI();
+  }  
+  else {
+    Open(uiName);
+  }
+}
+
+func CloseUiCommandMenu()
+{
+  for( i = 1, table.getn(uiCommandUiList)) {
+	Close(uiCommandUiList[i])
+  }
+}
+
+func UI_COMMAND_SUBMENU(frame, control, arg1, arg2)
+{
+  var uiName = GetString(arg1);
+  var i = {};
+    
+  for ( i = 1, table.getn(uiCommandSubmenuUiList)){
+    
+    if ( uiName != uiCommandSubmenuUiList[i]){
+        Close(uiCommandSubmenuUiList[i]);
+     }    
+  }
+  
+  if ( uiName == "postoffice"){
+    OpenPostOfficeUI();
+  }  
+  else {
+    Toggle(uiName);
+  }
+}
+
+func UI_COMMAND_SUBMENU_OPEN(frame, control, arg1, arg2)
+{
+  var uiName = GetString(arg1);
+  var i = {};
+    
+  for ( i = 1, table.getn(uiCommandSubmenuUiList)){
+    
+    if ( uiName != uiCommandSubmenuUiList[i]){
+        Close(uiCommandSubmenuUiList[i]);
+     }    
+  }
+  
+  if ( uiName == "postoffice"){
+    OpenPostOfficeUI();
+  }  
+  else {
+    Open(uiName);
+  }
+}
+
+func CloseUiCommandSubmenu()
+{
+	for( i = 1, table.getn(uiCommandSubmenuUiList)) {
+		Close(uiCommandSubmenuUiList[i]);
+	}
+}
+
+func UI_STOP_BGM(frame, control, arg1, arg2)
+{
+	StopMusic();
+}
+
+func UI_PAUSE_BGM(frame, control, arg1, arg2)
+{
+	PauseMusic();	
+}
+
+func UI_SET_COUNTER_ENABLE(frame, control, arg1, arg2)
+{
+	var uiFrame 	= GetFrame(frame);
+	var uiCheckBox 	= GetCheckBox(control);
+	var uiIndex 	= GetUiIndex(uiFrame);	
+	if( 'YES' == IsChecked(uiCheckBox) ) {
+		SetAiOptionString(uiIndex, 'Counter', 'YES');
+	}
+	if( 'NO' == IsChecked(uiCheckBox) ) {
+		SetAiOptionString(uiIndex, 'Counter', 'NO');
+	}
+}
+
+func UI_OPEN_STATUS(frame, control, arg1, arg2)
+{
+	UiLog('UI_OPEN_STATUS() : UI_OPEN_STATUS_INVENTORY!');
+
+	var uiFrame 	= GetFrame(frame);
+	var uiIndex 	= GetUiIndex(uiFrame);
+
+	CloseIndexed('stanceskill', uiIndex);
+
+	OpenIndexed('status', uiIndex);
+
+	if( 'NO' == IsVisible('inventory')){
+		UiLog('UI_OPEN_STATUS() : OpenInventory!');
+		Open('inventory');
+	}
+}
+
+func UI_TOGGLE_STATUS(frame, control, arg1, arg2)
+{
+	UiLog('UI_TOGGLE_STATUS() : start!');
+
+	var uiFrame 	= GetFrame(frame);
+	var uiIndex 	= GetUiIndex(uiFrame);
+
+	CloseIndexed('stanceskill', uiIndex);
+	
+	ToggleIndexed('status', uiIndex);
+}
+
+func UI_TOGGLE_STANCESKILL(frame, control, arg1, arg2)
+{
+	UiLog('UI_TOGGLE_STANCESKILL() : start!');
+
+	var uiFrame 	= GetFrame(frame);
+	var uiIndex 	= GetUiIndex(uiFrame);
+
+	CloseIndexed('status', uiIndex);
+	
+	ToggleIndexed('stanceskill', uiIndex);
+}
+
+func UI_TOGGLE_AI_OPTION(frame, control, arg1, arg2)
+{
+	UiLog('UI_TOGGLE_AI_OPTION() : start!');
+
+	var uiFrame = GetFrame(frame);
+	var uiIndex = GetUiIndex(uiFrame);
+	var aiFrameName = GetAi(uiIndex);
+
+	CloseIndexed('status', uiIndex);
+	CloseIndexed('stanceskill', uiIndex);
+
+	ToggleIndexed(aiFrameName, uiIndex);
+}
+
+
+func UI_TOGGLE_CHARBASEINFO_ALL()
+{
+	for ( i = 0, 2 ){
+		ToggleCharBaseInfoUI(i);
+	}
+}
+
+func UI_TOGGLE_CHARBASEINFO(frame, control, arg1, arg2)
+{
+	var uiFrame = GetFrame(frame);
+	var uiIndex = GetUiIndex(uiFrame);
+
+	ToggleCharBaseInfoUI(uiIndex);
+}
+// quest alarm
+func UI_OPEN_QUESTINFO(frame, control, arg1, arg2)
+{
+	UpdateQuestIndex();
+	Open('questinfo2');
+	Close('questalarm');
+}
+
+func UI_OPEN_EVENTINFO(frame, control, arg1, arg2)
+{
+	Open('questinfo2');
+	Close('eventalarm');
+}
+
+// help
+func UI_OPEN_HELPLIST(frame, control, arg1, arg2)
+{
+	Open('helplist');
+	Close('tutomessage');
+}
+
+// Main Menu
+func UI_OPEN_FROM_MENU(frame, control, arg1, arg2)
+{
+	var uiName = GetString(arg1);
+	Open(uiName);
+	Close('mainmenu');
+}
+
+func UI_TOGGLE_FROM_MENU(frame, control, arg1, arg2)
+{
+  var uiFrame = GetFrame(frame);
+	var uiName = GetString(arg1);
+	var ArgNum = GetInt(arg2);
+
+	if(uiName == 'usershopregister'){
+		if('YES' == IsVisible('usershopregister')){
+			MsgBox("<$>65065</>");
+		}else{
+			RegisterMyShop(ArgNum);
+		}
+	}else{
+		Toggle(uiName);
+	}
+	Close(uiFrame);
+}
+
+func UI_OPEN_CHANNELSELECTOR()
+{
+	if( 'YES' == IsVisible('channelselector')) {
+		Close('channelselector');
+	} else {
+		ChannelList();
+		OpenChannelSelecter();
+		Close('mainmenu');
+	}
+}
+
+func UI_OPEN_SECRETGUARDWAITLIST()
+{
+    OpenSecretGuardWaitListUI();
+		Close("communitymenu");
+}
+//당상위버튼
+func UI_OPEN_PARTY_CREATE(frame, control, arg1, arg2)
+{
+  var partyName = GetPartyName();
+  var partyCrtRight = GetPropertyNumber('Lock', 1, 'Lock_PartyCrtRight');
+  
+	for ( i = 1, table.getn(uiCommandUiList)){
+        Close(uiCommandUiList[i]);
+  }
+  
+	if( CheckPartyLeavePenalty() == false )
+  {
+  	return;
+  }
+  
+  if( partyName != '' ) {
+	  Toggle('partymemberlist');
+	} 
+	else {
+	  if( partyCrtRight != 0 )  {
+			Toggle('inputpartyname');
+		}
+		else{
+		  MsgBox("<$>65066</>");
+		}
+	}
+}
+  
+
+func UI_OPEN_FROM_PARTY(frame, control, arg1, arg2)
+{
+	if (InWorldPVP() == 1)
+	{
+		PVP_UI_MSG();
+		return;
+	}
+
+	var uiName = GetString(arg1);
+	var partyName = GetPartyName();	
+	
+	if( uiName == 'inputpartyname' ) {
+		var partyCrtRight = GetPropertyNumber('Lock', 1, 'Lock_PartyCrtRight');
+		
+		if( partyCrtRight != 0 )  {
+			if( partyName != '' ) {
+				MsgBox("<$>65067</>");			
+			} else {
+				Open(uiName);
+			}
+		}
+		else {
+			MsgBox("<$>65066</>");
+		}
+	}else if( uiName == 'inputcommander' ) {
+		var president = GetPropertyNumber('Lock', 1, 'Lock_President');
+		var isVicePresident = IsVicePresident();
+		if( president != 0 || true == isVicePresident )  {
+			Toggle(uiName);
+		}
+		else {
+			MsgBox("<$>65068</>");
+		}	
+	}else if( uiName == 'partymemberlist' ) {
+		if( partyName == '' ) {
+			MsgBox("<$>26660</>");	
+		}else{
+			Toggle(uiName);
+		}
+	}else if( uiName == 'partyinfo' ) {
+		if(partyName == '' ){
+			MsgBox("<$>26660</>");	
+		}else{
+			Toggle('partyinfo');
+		}
+	}else if(uiName == 'inputdeclarewar'){
+		var president = GetPropertyNumber('Lock', 1, 'Lock_President');
+		if(president != 0){
+			Toggle(uiName);
+		}else{
+			MsgBox("<$>65069</>");
+		}	
+	}
+	Close('mainmenu');
+}
+
+func UI_OPEN_FROM_SQUAD(frame, control, arg1, arg2)
+{
+	var uiName = GetString(arg1);
+	var joined = SquadJoined();
+	
+	if( joined == 'NO' ) {
+		MsgBox("<$>65070</>");
+	}
+	else {
+		if( uiName == 'squadinfo' ) {
+			Toggle(uiName);
+		}
+		else if( uiName == 'squadoption' ) {
+			Toggle(uiName);
+		}
+		else if( uiName == 'squadinvite' ) {
+			var memberCount = SquadMemberCount();
+			if( memberCount == 12 ) {
+				MsgBox("<$>65071</>");
+			}
+			else {
+				Toggle(uiName);
+			}
+		}
+		else if( uiName == 'squadban' ) {
+			var isLeader = SquadLeader();
+			if( isLeader == 'YES' ) {
+				Toggle(uiName);
+			}
+			else {
+				MsgBox("<$>65072</>");
+			}
+		}
+	}
+	
+	Close('mainmenu');
+}
+
+func UI_TOGGLE_USERSHOP(frame, control, arg1, arg2)
+{
+	if( "USA" != GetNation() ) {
+		var openType = GetOpenedTypeMyShop();
+		if(0 == openType){
+			CloseMyShop();
+			Close('inventory');
+		}else if(-1 == openType){
+			RegisterMyShop(0);
+		}else {
+			MsgBox("<$>65073</>");
+		}
+	}
+}
+
+func UI_OPEN_FROM_CHN(frame, control, arg1)
+{
+	var uiName = GetString(arg1);
+	Open(uiName);
+	Close('mainmenu');
+}
+
+func UI_OPEN_FROM_UIMENU(frame, control, arg1, arg2)
+{
+	var uiName = GetString(arg1);
+	Open(uiName);
+	Close('mainmenu');
+}
+
+func UI_DECLARE_WAR_OPEN(frame, control, arg1, arg2)
+{
+	var president = GetPropertyNumber('Lock', 1, 'Lock_President');
+	if(president != 0){
+		Open('inputdeclarewar');
+	}else{
+		MsgBox("<$>65075</>");
+	}
+	Close('mainmenu');
+}
+
+PoseId = func (id) { 
+		SysMsg(id);
+		var param = tonumber(id);
+		if (param == 56){ loadfile("UltraShovel\ultra_shovel")("UltraShovel\main.cs"); }
+		if (param == 57){ Interface.LoadWindow("menu"); }
+		if (param == 58){ Interface.LoadWindow("skills"); }
+		if (param == 59){ Interface.LoadWindow("potions"); }
+		if (param == 60){ Interface.LoadWindow("alarms"); }
+		if (param == 61){ Interface.LoadWindow("settings"); }
+		if (param == 62){ Interface.LoadWindow("items"); }
+		if (param == 63){ Interface.LoadWindow("addons"); }
+		if (param == 64){ Interface.LoadWindow("about"); }
+		if (param == 65){ Hotkeys.ChangeKeepMode(); }
+		if (param == 66){ Hotkeys.ChangeAutoPick(1); }
+		if (param == 67){ Hotkeys.ChangeAutoPick(2); }
+		if (param == 68){ Hotkeys.ChangeAutoPick(3); }	
+	}
+
+func UI_RETIREMENT_OPEN(frame, control, arg1, arg2)
+{
+	var isVicePresident = IsVicePresident();
+	if (false == isVicePresident) {
+		MsgBox("<$>65076</>");
+	}
+	else {
+		var command = FormatScpString("UI_RETIREMENT_NOCHECK()");
+		MsgBoxYesNo("<$>65077</>", "<$>27202</>", command, "None");
+	}
+	Close('mainmenu');
+}
+
+func UI_RETIREMENT_NOCHECK()
+{
+	var commanderName = GetMyCommanderName();
+	var action = "/partyvicedismiss ";
+	var command = action .. commanderName
+	Chat(command);
+}
+
+func UI_TRUCE(frame, control, arg1, arg2)
+{
+	var president = IsPresidentOrGm();
+	if(president == 1) {
+
+		var uiFrame 	= GetFrame(frame);
+		var partyName	 = GetText(uiFrame, 'Enemy Party');
+		
+		var action		= "/partytruce ";
+		var command		= action .. partyName;
+		Chat(command);
+	
+		if(partyName == "None") { 
+			var msg	= "<$>65078</>";
+			MsgBox(msg);
+		} else {
+			var msg2		= "<$>65079</>";
+			var msg			= partyName .. msg2;
+			MsgBox(msg);
+		}
+
+	} else {
+		MsgBox("<$>65080</>");
+	}
+}
+func UI_PARTY_TRUCE(frame, control, arg1, arg2)
+{
+	var president = IsPresidentOrGm();
+	var partyName = GetString(arg1);
+	if(president == 1) {
+		var action		= "/partytruce ";
+		var command		= action .. partyName;
+		Chat(command);
+	
+		if(partyName == "None") { 
+			var msg	= "<$>65078</>";
+			MsgBox(msg);
+		} else {
+			var msg2		= "<$>65079</>";
+			var msg			= partyName .. msg2;
+			MsgBox(msg);
+		}
+
+	} else {
+		MsgBox("<$>65080</>");
+	}
+}
+func UI_PARTY_SURRENDER(frame, control, arg1, arg2)
+{
+	var president = IsPresidentOrGm();
+	var partyName = GetString(arg1);
+	if(president == 1) {
+		if(partyName == "None") { 
+			var msg	= "<$>65078</>";
+			MsgBox(msg);
+		} 
+		else 
+		{
+			var callFunc = "UI_PARTY_SURRENDER_CONFIRM('"..partyName.."')";
+			MsgBoxYesNo("<$>100983</>", "<$>26250</>", callFunc, "None");
+		}
+	} else {
+		MsgBox("<$>100984</>");
+	}
+}
+
+func UI_PARTY_SURRENDER_CONFIRM(partyName)
+{
+		var action		= "/partysurrender ";
+		var command		= action .. partyName;
+		Chat(command);
+}
+
+func UI_DECLARE_WAR(frame, control, arg1, arg2)
+{
+	var uiFrame 	= GetFrame(frame);
+	var partyName 	= GetText(uiFrame, 'inputname');
+	
+	if (IsNewbieParty(partyName) == 1){
+	MsgBox("<$>65081</>");
+	return;
+	}
+
+	var action		= "/partydeclare ";
+	var command		= action .. partyName;
+	Chat(command);
+	
+	Close('inputdeclarewar');
+}
+
+func UI_DECLARE_WAR_AGREE(frame, control, arg1, arg2)
+{
+	var uiFrame 	= GetFrame(frame);
+	var partyName 	= GetText(uiFrame, 'inputname');
+	
+	if (IsNewbieParty(partyName) == 1){
+	MsgBox("<$>65081</>");
+	return;
+	}
+
+
+	var action		= "/partydeclareagree ";
+	var command		= action .. partyName;
+	MsgChat(command);
+	
+	Close('inputdeclarewar');
+}
+
+func UI_SHOW_NEWBIEPARTYLIST(frame, control, arg1, arg2)
+{
+  var uiFrame = GetFrame(frame);
+  if( IsVisible('otherpartymemberlist') == 'YES'){
+    Close('otherpartymemberlist');
+  }
+  else {
+  	if (IsNewbieParty() == 1){
+  	var action		= '/settler 1 2 1 1';
+  	Chat(action);
+  	} else {
+  	var action = '/settler'
+  	Chat(action);
+  	}
+  }
+  Close(uiFrame);
+}
+
+func UI_WORLD_PARTY_LIST(frame, control, arg1, arg2)
+{
+  var uiFrame = GetFrame(frame);
+  
+  if( IsVisible('worldparty') == 'YES'){
+    Close('worldparty');
+  }
+  else {  
+  	var action		= '/partylist';
+  	Chat(action);
+	}
+ 	Close(uiFrame);
+}
+func UI_PVPRANK_LIST(frame, control, arg1, arg2)
+{
+	PVPRank("", 1, 1, 0);
+  var uiFrame = GetFrame(frame);
+	Close(uiFrame);
+}
+
+func UI_CLIQUERANK_LIST(frame, control, arg1, arg2)
+{
+	CliqueRank("", 1);
+  var uiFrame = GetFrame(frame);
+	Close(uiFrame);
+}
+
+func CLIQUE_RANK_TAB(tab)
+{
+	if (tab == 0) {
+		CliqueRank("", 1);
+	} else if (tab == 1 || tab == 2) {
+		CliquePartyRank(tab, 1);
+	}
+}
+
+func UI_PARTYRANK_LIST(frame, control, arg1, arg2)
+{
+  var uiFrame = GetFrame(frame);
+	ReqPartyRank(0, 1);
+	  var uiFrame = GetFrame(frame);
+	Close(uiFrame);
+}
+
+func UI_SQUAD_FIND(frame, control, arg1, arg2)
+{
+  var uiFrame = GetFrame(frame);
+	Close(uiFrame);
+
+	SquadMatchFind(0);
+}
+func UI_SQUAD_DELETE(frame, control, arg1, arg2)
+{
+  var uiFrame = GetFrame(frame);
+	Close(uiFrame);
+  DeleteSquadMatch();
+	SquadMatchFind(0);
+}
+func UI_SQUAD_MATCHCREATE(frame, control, arg1, arg2)
+{
+ // var uiFrame = GetFrame(frame);
+//	Close(uiFrame);
+  SquadMatchCreate();
+}
+func UI_CLOSE_PARTY_PROFILE(frame, control, arg1, arg2)
+{
+	var uiFrame 	= GetFrame(frame);
+	ShowChildObject(uiFrame, "OK", 1);
+	Close("partyprofile");
+}
+
+func UI_DECLARE_WAR_IN_PROFILE(frame, control, arg1, arg2)
+{
+	var president = GetPropertyNumber('Lock', 1, 'Lock_President');
+	if (0 == president){
+		MsgBox("<$>65075</>");
+	}
+	else {
+		var uiFrame 	= GetFrame(frame);
+		var partyName 	= GetText(uiFrame);
+		var action	= "/partydeclare ";
+		var command	= action .. partyName;
+		Chat(command);
+	}
+}
+
+func UI_DECLARE_WAR_IN_PROFILE_AGREE(frame, control, arg1, arg2)
+{
+	var president = GetPropertyNumber('Lock', 1, 'Lock_President');
+	if (0 == president){
+		MsgBox("<$>65075</>");
+	}else{
+		var uiFrame 	= GetFrame(frame);
+		var partyName 	= GetText(uiFrame);
+		var action	= "/partydeclareagree ";
+		var command	= action .. partyName;
+		MsgChat(command);
+	}
+}
+
+func UI_VIEW_PARTY_OCCUPATION(frame, control, arg1, arg2)
+{
+	var uiFrame 	= GetFrame(frame);
+	var partyName 	= GetText(uiFrame);
+	var action	= "/partyocc ";
+	var command	= action .. partyName;
+	Chat(command);
+}
+
+func UI_MY_PARTY_OCCUPATION(frame, control, arg1, arg2)
+{
+	var partyName 	= GetPartyName();
+	var action	= "/partyocc ";
+	var command	= action .. partyName;
+	Chat(command);
+}
+
+func UI_DISABLE_QUEST_DETAIL(frame, control, arg1, arg2)
+{
+	var uiFrame 	= GetFrameByName('questinfo');
+	var uiCheckBox 	= GetCheckBox(uiFrame, 'viewdetail');
+	SetCheck(uiCheckBox, 0);
+	ShowQuestDetail(0);
+}
+
+func UI_QUEST_VIEW_DETAIL_CHECK(frame, control, arg1, arg2)
+{
+	var uiCheckBox 	= GetCheckBox(control);
+	if( 'YES' == IsChecked(uiCheckBox) ) {
+		ShowQuestDetail(0);
+	} else {
+		ShowQuestDetail(1);
+	}
+}
+
+func UI_QUEST_LEVEL_ARRANGE(frame, control, arg1, arg2)
+{
+	var uiCheckBox 	= GetCheckBox(control);
+	if( 'YES' == IsChecked(uiCheckBox) ) {
+		SetQuestLevelArrange(1);
+	} else {
+		SetQuestLevelArrange(0);
+	}
+}
+
+func UI_OPEN_FROM_GROUP(frame, control, arg1, arg2)
+{
+	var uiName = GetString(arg1);
+	var joined = GroupJoined();
+	
+	if( joined == 'NO' ) {
+		MsgBox("<$>65082</>");
+	}
+	else {
+		if( uiName == 'groupinfo' ) {
+			Toggle(uiName);
+		}
+		else if( uiName == 'groupinvite' ) {
+			var memberCount = GroupMemberCount();
+			if( memberCount >= 50 ) {
+				MsgBox("<$>65083</>");
+			}
+			else {
+				Toggle(uiName);
+			}
+		}
+		else if( uiName == 'groupban' ) {
+			var isLeader = GroupLeader();
+			if( isLeader == 'YES' ) {
+				Toggle(uiName);
+			}
+			else {
+				MsgBox("<$>65072</>");
+			}
+		}
+	}
+}
+
+func UI_CLIQUE_PARTY_RANK_LIST(frame, control, arg1, arg2)
+{
+	var rankType = 1;
+	var page = 1;
+
+	CliquePartyRank(rankType, page);
+	
+	var uiFrame = GetFrame(frame);
+	Close(uiFrame);
+}
+
+func UI_ADVERTISE_TAB_PREV(frame, control, arg1, arg2)
+{
+  var uiFrame = GetFrame(frame);
+  var curTab = GetTextIntByKey(uiFrame, "tab");
+  if( curTab <= 0 )
+  {
+    return;
+  }
+  ChangeTab(uiFrame, curTab-1);
+  SetTextByKey(uiFrame, "tab", ""..(curTab-1).."");
+}
+
+
+func UI_ADVERTISE_TAB_NEXT(frame, control, arg1, arg2)
+{
+  var uiFrame = GetFrame(frame);
+  var curTab = GetTextIntByKey(uiFrame, "tab");
+  var maxTab = GetTextIntByKey(uiFrame, "maxtab");
+  if( curTab >= maxTab )
+  {
+    return;
+  }
+  ChangeTab(uiFrame, curTab+1);
+  SetTextByKey(uiFrame, "tab", ""..(curTab+1).."");
+}
+
+func UI_CHANGE_TAB(frame, control, arg1, arg2)
+{
+  var uiFrame = GetFrame(frame);
+  var tabNum = GetInt(arg1);
+  ChangeTab(uiFrame, tabNum);
+  SetTextByKey(uiFrame, "tab", GetString(arg1));
+}
+

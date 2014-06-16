@@ -1,4 +1,4 @@
-Ultra Shovel AI [Tested 01.12.2013 on SGE]
+Ultra Shovel AI [Tested 16.06.2014 on SGE]
 ===========
 
 This repository contains source files for UltraShovel AI for MMORPG Granado Espada.
