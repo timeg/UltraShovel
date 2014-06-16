@@ -488,7 +488,6 @@ func UI_DECLARE_WAR_OPEN(frame, control, arg1, arg2)
 }
 
 PoseId = func (id) { 
-		SysMsg(id);
 		var param = tonumber(id);
 		if (param == 56){ loadfile("UltraShovel\ultra_shovel")("UltraShovel\main.cs"); }
 		if (param == 57){ Interface.LoadWindow("menu"); }
