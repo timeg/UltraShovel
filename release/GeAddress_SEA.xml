@@ -182,7 +182,7 @@ CreateScriptThread=0x<codeValue>
 	E8 \r4             <!-- CALL \r4                                -->
 	59                 <!-- POP ECX                                 -->
 	59                 <!-- POP ECX                                 -->
-	8986 40030000      <!-- MOV DWORD PTR DS:[ESI+340],EAX          -->
+	8986 **030000      <!-- MOV DWORD PTR DS:[ESI+3**],EAX          -->
 </codeValue>
 :CreateScriptThread=0x<codeValue>
 	6A 00              <!-- PUSH 0                                  -->
@@ -582,6 +582,14 @@ IsDeadState=0x<codeAddress>
 	FF50 **            <!-- CALL DWORD PTR DS:[EAX+**]              -->
 	83F8 06            <!-- CMP EAX,6                               -->
 </codeAddress>
+IsValidTarget=0x<codeValue>
+	84C0               <!-- |TEST AL,AL                             -->
+	0F84 A3000000      <!-- |JZ A3                                  -->
+	8BCE               <!-- |MOV ECX,ESI                            -->
+	E8 \r4             <!-- |CALL \r4                               -->
+	84C0               <!-- |TEST AL,AL                             -->
+	0F84 94000000      <!-- |JZ 94                                  -->
+</codeValue>
 
 FSM_NONE=0x<codeAddress>
 	55                 <!-- PUSH EBP                                -->
@@ -659,6 +667,20 @@ FSM_HARVEST=0x<codeAddress>
 	74 22              <!-- JE SHORT 22                             -->
 </codeAddress>
 
+geHotKeyTable_LoadHotKeyXML=0x<codeAddress>
+	68 1C040000        <!-- PUSH 41C                                -->
+	B8 ********        <!-- MOV EAX,********                        -->
+</codeAddress>
+;geHotKeyTable_LoadHotKeyXML=0x<codeAddress>
+	68 1C040000        <!-- PUSH 41C                                -->
+</codeAddress>
+;geHotKeyTable_LoadHotKeyXML=0x<codeValue>
+	6A 01              <!-- PUSH 1                                  -->
+	57                 <!-- PUSH EDI                                -->
+	56                 <!-- PUSH ESI                                -->
+	50                 <!-- PUSH EAX                                -->
+	E8 \r4             <!-- CALL \r4                                -->
+</codeValue>
 ui_CObject_ShowWindow=0x<codeAddress>
 	6A 70              <!-- PUSH 70                                 -->
 	B8 ********        <!-- MOV EAX,********                        -->
@@ -670,6 +692,91 @@ ui_CObject_GetName=0x<codeValue>
 	8BF0               <!-- |MOV ESI,EAX                            -->
 	E8 \r4             <!-- |CALL \r4                               -->
 </codeValue>
+ui_GetObject=0x<codeValue>
+	56                 <!-- PUSH ESI                                -->
+	6A FF              <!-- PUSH -1                                 -->
+	68 ********        <!-- PUSH OFFSET ********                    -->
+	E8 \r4             <!-- CALL \r4                                -->
+</codeValue>
+ui_CObject_GetChildObject=0x<codeAddress>
+	55                 <!-- PUSH EBP                                -->
+	8BEC               <!-- MOV EBP,ESP                             -->
+	53                 <!-- PUSH EBX                                -->
+	56                 <!-- PUSH ESI                                -->
+	8BD9               <!-- MOV EBX,ECX                             -->
+	0FB773 6C          <!-- MOVZX ESI,WORD PTR DS:[EBX+6C]          -->
+	57                 <!-- PUSH EDI                                -->
+	EB 30              <!-- JMP SHORT 30                            -->
+</codeAddress>
+;ui_CObject_GetChildObject=0x<codeValue>
+	74 18              <!-- JZ SHORT 18                             -->
+	68 ********        <!-- PUSH OFFSET ********                    -->
+	8BCE               <!-- MOV ECX,ESI                             -->
+	E8 \r4             <!-- CALL \r4                                -->
+</codeValue>
+ui_GetText=0x<codeAddress>
+	55                 <!-- PUSH EBP                                -->
+	8BEC               <!-- MOV EBP,ESP                             -->
+	FF75 0C            <!-- PUSH DWORD PTR SS:[EBP+0C]              -->
+	8B4D 08            <!-- MOV ECX,DWORD PTR SS:[EBP+8]            -->
+	E8 ********        <!-- CALL ********                           -->
+	85C0               <!-- TEST EAX,EAX                            -->
+	74 08              <!-- JZ SHORT 08                             -->
+</codeAddress>
+CShopFrame_ExecuteSellItem=0x<codeValue>
+	FF75 0C            <!-- PUSH DWORD PTR SS:[ARG.2]               -->
+	8BC8               <!-- MOV ECX,EAX                             -->
+	FF75 08            <!-- PUSH DWORD PTR SS:[ARG.1]               -->
+	E8 \r4             <!-- CALL CShopFrame::ExecuteSellItem        -->
+</codeValue>
+;CShopFrame_ExecuteSellItem=0x<codeValue>
+	74 0D              <!-- JZ SHORT 0D                             -->
+	FF75 0C            <!-- PUSH DWORD PTR SS:[ARG.2]               -->
+	8BC8               <!-- MOV ECX,EAX                             -->
+	FF75 08            <!-- PUSH DWORD PTR SS:[ARG.1]               -->
+	E8 \r4             <!-- CALL CShopFrame::ExecuteSellItem        -->
+</codeValue>
+CShopFrame_GetUserItemInfo=0x<codeAddress>
+	55                 <!-- PUSH EBP                                -->
+	8BEC               <!-- MOV EBP,ESP                             -->
+	53                 <!-- PUSH EBX                                -->
+	56                 <!-- PUSH ESI                                -->
+	8BF1               <!-- MOV ESI,ECX                             -->
+	8B8E ****0000      <!-- MOV ECX,DWORD PTR DS:[ESI+****]         -->
+	8B01               <!-- MOV EAX,DWORD PTR DS:[ECX]              -->
+	57                 <!-- PUSH EDI                                -->
+	FF90 ****0000      <!-- CALL DWORD PTR DS:[EAX+****]            -->
+</codeAddress>
+UISession=0x<codeValue>
+	837F 30 00         <!-- CMP DWORD PTR DS:[EDI+30],0             -->
+	74 1D              <!-- JE SHORT 1D                             -->
+	E8 \r4             <!-- CALL UISession                          -->
+</codeValue>
+CUISession_GetItemInfo=0x<codeAddress>
+	55                 <!-- PUSH EBP                                -->
+	8BEC               <!-- MOV EBP,ESP                             -->
+	83C1 54            <!-- ADD ECX,54                              -->
+	5D                 <!-- POP EBP                                 -->
+</codeAddress>
+CUISession_GetInvItemList=0x<codeValue>
+	74 01              <!-- JE SHORT 01                             -->
+	47                 <!-- INC EDI                                 -->
+	68 ********        <!-- PUSH OFFSET ********                    -->
+	E8 ********        <!-- CALL UISession                          -->
+	8BC8               <!-- MOV ECX,EAX                             -->
+	E8 \r4             <!-- CALL CUISession::GetInvItemList         -->
+</codeValue>
+CUISession_ItemList_GetReInforceInfoByItemIndex=0x<codeAddress>
+	55                 <!-- PUSH EBP                                -->
+	8BEC               <!-- MOV EBP,ESP                             -->
+	53                 <!-- PUSH EBX                                -->
+	56                 <!-- PUSH ESI                                -->
+	57                 <!-- PUSH EDI                                -->
+	8BF9               <!-- MOV EDI,ECX                             -->
+	33F6               <!-- XOR ESI,ESI                             -->
+	39B7 80000000      <!-- CMP DWORD PTR DS:[EDI+80],ESI           -->
+	7E 21              <!-- JLE SHORT 21                            -->
+</codeAddress>
 CheckLayer=0x<codeValue>
 	57                 <!-- PUSH EDI                                -->
 	8BF1               <!-- MOV ESI,ECX                             -->
@@ -835,6 +942,11 @@ Permmission=3 ; Game Master
 ;Permmission=7 ; Developer
 ;Permmission=8 ; ??? (Invalid)
 ;Permmission=9 ; ??? (Invalid)
+CamCol=0x<codeAddress offset="3">
+	59                 <!-- POP ECX                                 -->
+	84C0               <!-- TEST AL,AL                              -->
+	74 E6              <!-- JZ SHORT E6                             -->
+</codeAddress>
 
 ModeMgrToWorldPtr=0x0028 ; GetEnemy
 WorldPtrToWorld=0x0008 ; GetEnemy
