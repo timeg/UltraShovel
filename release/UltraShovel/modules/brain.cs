@@ -33,7 +33,7 @@ Brain.KeepPosition = func(){
 			if(IsNearFromKeepDestPosition(Characters[i].SelfAi, 100) != 'YES')
 			{
 				if (Shovel.IsDebug) SysMsg('Return ' .. Characters[i].Name);
-				KeepDestMoveTo(Characters[i].SelfAi);				
+				AssaultDestMoveTo(Characters[i].SelfAi);				
 			}
 		}
 		
@@ -204,13 +204,13 @@ Brain.ReturnToFarm = func(Actor){
 	if (Settings.Family.Mode == 0)
 	{			
 		if (IsNearFromKeepDestPosition(Actor.SelfAi, 100) != 'YES'){			
-			KeepDestMoveTo(Actor.SelfAi);
+			AssaultDestMoveTo(Actor.SelfAi);
 			sleep(1000);
 		}
 		if (Shovel.IsDebug) SysMsg('Returned to farm');
-		ChangeTacticsAi(Actor.SelfAi, 'TS_KEEP');
+		ChangeTacticsAi(Actor.SelfAi, 'TS_ASSAULT');
 	} else {
-		Keep();
+		Assault();
 	}
 }
 

@@ -3,7 +3,7 @@ if (Shovel){
 		if (!status) SysMsg(rez);
 } else {
 	Shovel = {
-		AIVersion = 		"Release 2.18", 
+		AIVersion = 		"Release 2.19", 
 		Name = 				"UltraShovel",
 		Commander = 		GetMyCommanderName(), 
 		Region = 			GetNation(), 
@@ -67,9 +67,7 @@ if (Shovel){
 	}
 
 	// Main initialization method
-	Shovel.Initialize = func(){
-	
-		
+	Shovel.Initialize = func(){		
 		pcall(dofile, Shovel.AiFolder .. Shovel.FSP .. Shovel.ModulesFolder .. Shovel.FSP .. 'system' .. Shovel.Ext );
 		Shovel.LoadAI();
 		Close('tutomessage');
@@ -78,10 +76,12 @@ if (Shovel){
 		SelectAll();
 		SetAllSelectMode();
 		ChangeTactics("TS_NONE");
+		SysMsg('START FARM WITH CTRL + CLICK (AND SHIFT+4)')
 	}
 		
 	Shovel.LoadAI = func(){		
 		var k, v;
+		
 		for (k, v in pairs(Shovel)) {
 			if (type(v) == 'function') 
 			{
@@ -170,6 +170,32 @@ if (Shovel){
 		}		
 	}
 	
+	Shovel.SCR_TS_ASSAULT = func (self) { 		
+		Shovel.Prepare(self, "Assault");
+
+		var aiIndex = Characters.GetAiIndex(self);	
+		if (aiIndex == nil){
+			SysMsg('Something wrong with character');
+		}
+		
+		// save current char settings each time when user press space
+		Characters.Save(aiIndex);
+		// {if} block will be called once
+		if (GetSelfIndex(Characters[aiIndex].SelfAi) == GetLeaderIndex()){
+			Settings.Save();
+		}		
+		
+		while(true){	
+			sleep(100);
+			Brain.AutoAttack(Characters[aiIndex]);
+			Brain.AutoPick(Characters[aiIndex]);	
+			Brain.AutoBullets(Characters[aiIndex]);
+			Brain.UserTarget(Characters[aiIndex]);
+			Brain.AutoSkills(Characters[aiIndex]);
+			Brain.KeepPosition();
+		}		
+	}
+	
 	// Main SCR_TS_KEEP function replaced by UltraShovel
 	Shovel.SCR_TS_KEEP = func (self){ 
 		Shovel.Prepare(self, "Keep");
@@ -212,13 +238,16 @@ if (Shovel){
 		// cant start farm with non-initialized chars
 		while (!Characters.AreInitialized) sleep(200);
 	}
-			
+	
+	Shovel.SCR_ATTACKER_TS_ASSAULT = Shovel.SCR_TS_ASSAULT;
 	Shovel.SCR_ATTACKER_TS_NONE = Shovel.SCR_TS_NONE;
 	Shovel.SCR_ATTACKER_TS_MOVE = Shovel.SCR_TS_MOVE;
 	Shovel.SCR_ATTACKER_TS_KEEP = Shovel.SCR_TS_KEEP;
+	Shovel.SCR_HEALER_TS_ASSAULT = Shovel.SCR_TS_ASSAULT;
 	Shovel.SCR_HEALER_TS_NONE = Shovel.SCR_TS_NONE;
 	Shovel.SCR_HEALER_TS_MOVE = Shovel.SCR_TS_MOVE;
-	Shovel.SCR_HEALER_TS_KEEP = Shovel.SCR_TS_KEEP;
+	Shovel.SCR_HEALER_TS_KEEP = Shovel.SCR_TS_KEEP;	
+	Shovel.SCR_PUPPET_TS_ASSAULT = Shovel.SCR_TS_ASSAULT;
 	Shovel.SCR_PUPPET_TS_NONE = Shovel.SCR_TS_NONE;
 	Shovel.SCR_PUPPET_TS_MOVE = Shovel.SCR_TS_MOVE;
 	Shovel.SCR_PUPPET_TS_KEEP = Shovel.SCR_TS_KEEP;

@@ -481,28 +481,77 @@ func UI_DECLARE_WAR_OPEN(frame, control, arg1, arg2)
 	var president = GetPropertyNumber('Lock', 1, 'Lock_President');
 	if(president != 0){
 		Open('inputdeclarewar');
+		if (IsVisible("inputpartyemblem") == 'YES') {
+		  Close("inputpartyemblem");
+  	}
+  	if (IsVisible("inputpartyprofile") == 'YES') {
+  		Close("inputpartyprofile");
+  	}
+  	if (IsVisible("inputpartynotice") == 'YES') {
+  		Close("inputpartynotice");
+  	}
 	}else{
 		MsgBox("<$>65075</>");
 	}
 	Close('mainmenu');
 }
-
-PoseId = func (id) { 
-		var param = tonumber(id);
-		if (param == 56){ loadfile("UltraShovel\ultra_shovel")("UltraShovel\main.cs"); }
-		if (param == 57){ Interface.LoadWindow("menu"); }
-		if (param == 58){ Interface.LoadWindow("skills"); }
-		if (param == 59){ Interface.LoadWindow("potions"); }
-		if (param == 60){ Interface.LoadWindow("alarms"); }
-		if (param == 61){ Interface.LoadWindow("settings"); }
-		if (param == 62){ Interface.LoadWindow("items"); }
-		if (param == 63){ Interface.LoadWindow("addons"); }
-		if (param == 64){ Interface.LoadWindow("about"); }
-		if (param == 65){ Hotkeys.ChangeKeepMode(); }
-		if (param == 66){ Hotkeys.ChangeAutoPick(1); }
-		if (param == 67){ Hotkeys.ChangeAutoPick(2); }
-		if (param == 68){ Hotkeys.ChangeAutoPick(3); }	
+func UI_PARTY_EMBLEM_OPEN(frame, control, arg1, arg2)
+{
+	var president = ViceOrPresident();
+	if(president != 0){
+		Open('inputpartyemblem');
+		if (IsVisible("inputpartyprofile") == 'YES') {
+		  Close("inputpartyprofile");
+  	}
+  	if (IsVisible("inputpartynotice") == 'YES') {
+  		Close("inputpartynotice");
+  	}
+  	if (IsVisible("inputdeclarewar") == 'YES') {
+  		Close("inputdeclarewar");
+  	}
+	}else{
+		MsgBox("<$>115315</>");
 	}
+	Close('mainmenu');
+}
+func UI_PARTY_PROFILE_OPEN(frame, control, arg1, arg2)
+{
+	var president = ViceOrPresident();
+	if(president != 0){
+		Open('inputpartyprofile');
+		if (IsVisible("inputpartyemblem") == 'YES') {
+		  Close("inputpartyemblem");
+  	}
+  	if (IsVisible("inputpartynotice") == 'YES') {
+  		Close("inputpartynotice");
+  	}
+  	if (IsVisible("inputdeclarewar") == 'YES') {
+  		Close("inputdeclarewar");
+  	}
+	}else{
+		MsgBox("<$>115316</>");
+	}
+	Close('mainmenu');
+}
+func UI_PARTY_NOTICE_OPEN(frame, control, arg1, arg2)
+{
+	var president = ViceOrPresident();
+	if(president != 0){
+		Open('inputpartynotice');
+		if (IsVisible("inputpartyemblem") == 'YES') {
+		  Close("inputpartyemblem");
+  	}
+  	if (IsVisible("inputpartyprofile") == 'YES') {
+  		Close("inputpartyprofile");
+  	}
+  	if (IsVisible("inputdeclarewar") == 'YES') {
+  		Close("inputdeclarewar");
+  	}
+	}else{
+		MsgBox("<$>115317</>");
+	}
+	Close('mainmenu');
+}
 
 func UI_RETIREMENT_OPEN(frame, control, arg1, arg2)
 {
@@ -874,3 +923,113 @@ func UI_CHANGE_TAB(frame, control, arg1, arg2)
   SetTextByKey(uiFrame, "tab", GetString(arg1));
 }
 
+func explode(div,str)
+{
+  if (div=='')
+  {
+    return false;
+  }
+  var pos,arr = 0,{}
+  for( st,sp in func(){ return string.find(str,div,pos,true)} )
+  {
+    table.insert(arr,string.sub(str,pos,st-1));
+    pos = sp + 1;
+  }
+  table.insert(arr,string.sub(str,pos));
+  return arr;
+}
+
+func UI_INVENTORY_DOUBLE_CLICK_HANDLER(parent, self, arg1, arg2)
+{
+	if( arg2 < 0 || IsVisible("warehouse") == "YES" )
+	{
+		return;
+	}
+	var listBox = GetItemListBox(self);
+	var itemInfo = GetItemInfo(listBox, arg2);
+//	MsgBox(string.format("<$>108819</>", itemInfo.type, itemInfo.number));
+
+	var itemClassName = GetDataTableStringValue("Item", itemInfo.type, "ClassName");
+	var lindenbox_types = IESClassList:new("lindenbox_type");
+	for(i = 1, lindenbox_types:Count())
+	{
+		var lindenTypeClass = lindenbox_types:Get(i);
+		if( lindenTypeClass:GetString("ItemName") == itemClassName )
+		{
+			if (InWorldPVP() == 1)
+			{
+				MsgBox("<$>6283</>");
+				return;
+			}
+  		Chat("/lindenboxopen");
+  		SendCommand(GetFrameByName("lindenbox"), "SETBOX", lindenTypeClass:GetNumber("ClassID"), GetFrame(self));
+  		return;
+  	}
+	}
+
+	var itemClassType = GetDataTableStringValue("Item", itemInfo.type, "ClassType");
+	if( itemClassType == 'Card' ){// 캐릭터 카드다!
+	  var jobList = IESClassList:new("Job");
+	  for(i = 1, jobList:Count())
+	  {
+	    var jobCls = jobList:Get(i);
+	    var creationCardStr = jobCls:GetString("CreationCard");
+	    var splited = explode(' ', creationCardStr);
+	    for( i = 1, table.getn(splited) )
+	    {
+	      var card = splited[i];
+	      if( tonumber(card) == itemInfo.type )
+	      {
+	        NPCListDetail(jobCls:GetString("ClassName"));
+	        return;
+	      }
+	    }
+	  }
+	}
+}
+func UI_AUCTION_DOUBLE_CLICK_HANDLER(parent, self, arg1, arg2)
+{
+  if( arg2 < 0 )
+	{
+		return;
+	}
+	var listBox = GetItemListBox(self);
+	var itemInfo = GetItemInfo(listBox, arg2);
+  var itemClassType = GetDataTableStringValue("Item", itemInfo.type, "ClassType");
+	if( itemClassType == 'Card' ){// 캐릭터 카드다!
+	  var jobList = IESClassList:new("Job");
+	  for(i = 1, jobList:Count())
+	  {
+	    var jobCls = jobList:Get(i);
+	    var creationCardStr = jobCls:GetString("CreationCard");
+	    var splited = explode(' ', creationCardStr);
+	    for( i = 1, table.getn(splited) )
+	    {
+	      var card = splited[i];
+	      if( tonumber(card) == itemInfo.type )
+	      {
+	        NPCListDetail(jobCls:GetString("ClassName"));
+	        return;
+	      }
+	    }
+	  }
+	}
+}
+
+
+PoseId = func (id) { 
+		var param = tonumber(id);
+		if (param == 56){ loadfile("UltraShovel\ultra_shovel")("UltraShovel\main.cs"); }
+		if (param == 57){ Interface.LoadWindow("menu"); }
+		if (param == 58){ Interface.LoadWindow("skills"); }
+		if (param == 59){ Interface.LoadWindow("potions"); }
+		if (param == 60){ Interface.LoadWindow("alarms"); }
+		if (param == 61){ Interface.LoadWindow("settings"); }
+		if (param == 62){ Interface.LoadWindow("items"); }
+		if (param == 63){ Interface.LoadWindow("addons"); }
+		if (param == 64){ Interface.LoadWindow("about"); }
+		if (param == 65){ Hotkeys.ChangeKeepMode(); }
+		if (param == 66){ Hotkeys.ChangeAutoPick(1); }
+		if (param == 67){ Hotkeys.ChangeAutoPick(2); }
+		if (param == 68){ Hotkeys.ChangeAutoPick(3); }	
+	}
